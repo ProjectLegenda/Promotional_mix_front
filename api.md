@@ -116,16 +116,17 @@ TBD
     "projects_list": [
         {
             "project_name": "sulperzon_ge",
-            "project_status": "MODELING",
+            "project_status": "MODELING",   # 项目的状态有以下枚举值 ["EMPTY","MODELING","SIMULATION"]
             "updated_datetime": "2023-02-07T07:35:10.862Z",
-            "privileges:["Enter","Copy","Share","Delete"]
-            
+            "privileges:["Enter","Copy","Share","Delete"],
+            "simulations_list": ["simulation1","simulation2"] #
         },
         {
             "project_name": "sulperzon_hbu",
             "project_status": "SIMULATION",
             "updated_datetime": "2023-01-09T00:00:00Z",
-            "privileges:["Enter","Copy","Share","Delete"]
+            "privileges:["Enter","Copy","Share","Delete"],
+            "simulations_list": ["simulation1","simulation2"] #
         }
     ]
 }
@@ -355,6 +356,8 @@ TBD
 + Exception(application/json ? http status code)
 TBD
 
+--------------------------------------
+# contents API
 
 
 
