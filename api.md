@@ -195,7 +195,21 @@ or
 }
 ```
 
-
+--------------------------------------
+## Delete exsting project
+* DELETE /api/projects/${group_name}/${project_name}
++ Request (application/json)
++ Response:(application/json)
+```
+{
+    "status":int   # 1 success, 0 faile
+}
+```
++ Exception(application/json ? http status code)
+{
+    "status":0,
+    "Message":"project_name is not correct"
+}
 
 
 
