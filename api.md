@@ -136,7 +136,7 @@ TBD
 
 
 ## Create empty project
-* PUT /api/projects/${group_name}/${project_name}
+* PUT ``/api/projects/${group_name}/${project_name}``
 + Request (application/json)
 ```
 {
@@ -170,7 +170,7 @@ TBD
 
 --------------------------------------
 ## Rename exsting project
-* POST /api/groups/${group_name}/${project_name}/rename
+* POST ``/api/groups/${group_name}/${project_name}/rename``
 + Request (application/json)
 ```
 {
@@ -198,7 +198,7 @@ or
 
 --------------------------------------
 ## Delete exsting project
-* DELETE /api/projects/${group_name}/${project_name}
+* DELETE ``/api/projects/${group_name}/${project_name}``
 + Request (application/json)
 + Response:(application/json)
 ```
@@ -215,7 +215,7 @@ or
 
 --------------------------------------
 ## Export excel project
-* GET /api/projects/${group_name}/${project_name}?action=export_excel
+* GET ``/api/projects/${group_name}/${project_name}?action=export_excel``
 + Request (application/json)
 + Response:(application/text/plain;charset=UTF-8)
 ```
@@ -227,7 +227,7 @@ or
 TBD
 
 ## Export json project
-* GET /api/projects/${group_name}/${project_name}?action=export_json
+* GET ``/api/projects/${group_name}/${project_name}?action=export_json``
 + Request (application/json)
 + Response:(application/json;charset=UTF-8)
 ```
@@ -241,7 +241,7 @@ TBD
 --------------------------------------
 
 ## Import excel project
-* POST /api/projects/${group_name}/${project_name}?action=import_excel
+* POST ``/api/projects/${group_name}/${project_name}?action=import_excel``
 + Request:(application/text/plain;charset=UTF-8)
 ```
 {
@@ -269,7 +269,7 @@ TBD
 TBD
 
 ## Import json project
-* POST /api/projects/${group_name}/${project_name}?action=import_json
+* POST ``/api/projects/${group_name}/${project_name}?action=import_json``
 + Request:(application/text/plain;charset=UTF-8)
 ```
 {
@@ -299,7 +299,7 @@ TBD
 --------------------------------------
 
 ## Fork project
-* POST /api/projects/${group_name}/${project_name}/fork
+* POST ``/api/projects/${group_name}/${project_name}/fork``
 + Request:(application/json)
 ```
 {
@@ -328,7 +328,7 @@ TBD
 
 
 ## Share project
-* POST /api/projects/${group_name}/${project_name}/share
+* POST ``/api/projects/${group_name}/${project_name}/share``
 + Request:(application/json)
 ```
 {
@@ -360,7 +360,7 @@ TBD
 # Contents API
 
 ## Preview meta data for empty project
-* GET /api/contents/${group_name}/${project_name}/meta_data
+* GET ``/api/contents/${group_name}/${project_name}/meta_data``
 + Request:(application/json)
 + Response:(application/json)
 ```
@@ -378,7 +378,7 @@ TBD
 --------------------------------------
 
 ## Run modeling 
-* POST /api/contents/${group_name}/${project_name}/modeling
+* POST ``/api/contents/${group_name}/${project_name}/modeling``
 + Request:(application/json)
 ```
 {
