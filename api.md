@@ -327,7 +327,7 @@ TBD
 
 
 
-## share project
+## Share project
 * POST /api/projects/${group_name}/${project_name}/share
 + Request:(application/json)
 ```
@@ -375,19 +375,19 @@ TBD
 ```
 --------------------------------------
 
-## run modeling 
+## Run modeling 
 * POST /api/contents/${group_name}/${project_name}/modeling
 + Request:(application/json)
 ```
 {
     "channel_layout":int # from ["7","9","customized"],
 
-    "channel_agg_rule":{ str:[str,str],str:[str]}, #  "new_column_name1":["old_column_name1","old_column_name2"] --> new_column_name is user input, "old_column_name" is element from /api/contents/${group_name}/${project_name}/empty/default_parameters key default_channel_list 
+    "channel_agg_rule":{ str:[str,str],str:[str]}, #  "new_column_name1":["old_column_name1","old_column_name2"] --> new_column_name is user input, "old_column_name" is element from /api/contents/${group_name}/${project_name}/empty/default_parameters key default_channel_list key channel_name
 
     "prior":[
         "channel_name":str,
         "channel_prior":int
-    ],
+    ], # all element from /api/contents/${group_name}/${project_name}/empty/default_parameters key default_channel_list
     "segmentation_type": str $ get element from /api/contents/${group_name}/${project_name}/empty/default_parameters key default_segmentation_type_list
     
 }
