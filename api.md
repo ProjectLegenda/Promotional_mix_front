@@ -102,13 +102,70 @@ TBD
     'message':'old group_name do not exist'
 }
 ```
+
 --------------------------------------
+# PROJECT API
+
+## Get project list
+* GET /api/${group_name}/projects
++ Request (application/json)
++ Response:(application/json)
+```
+{
+    "group_name": "sulperzon",
+    "projects_list": [
+        {
+            "project_name": "sulperzon_ge",
+            "project_status": "MODELING",
+            "updated_datetime": "2023-02-07T07:35:10.862Z",
+            "privileges:["Enter","Copy","Share","Delete"]
+            
+        },
+        {
+            "project_name": "sulperzon_hbu",
+            "project_status": "SIMULATION",
+            "updated_datetime": "2023-01-09T00:00:00Z",
+            "privileges:["Enter","Copy","Share","Delete"]
+        }
+    ]
+}
 
 
+```
 
 
+## Create empty project
+* PUT /api/projects/${group_name}/${project_name}
++ Request (application/json)
+```
+{
+    "brand_name":"nucala",
+    "time_period_id": int # only month_id
+}
 
+```
 
++ Response:(application/json)
+```
+#success
+{
+    "status":1 success
+}
+```
+```
+#fail
+{
+    "status": 0,
+    "message": "Project_name has been used. Please rename"
+}
+```
++ Exception(application/json ? http stats code)
+```
+{
+    "status": 0,
+    "message":"group_name is not correct"
+}
+```
 
 
 
