@@ -326,6 +326,35 @@ TBD
 
 
 
+## share project
+* POST /api/projects/${group_name}/${project_name}/share
++ Request:(application/json)
+```
+{
+    "modid": str,
+    "type": str # modid or email address
+    
+}
+```
+
++ Response:(application/json)
+```
+#success
+{
+    "status":1
+}
+
+```
+```
+#fail
+{
+    "status": 0,
+    "message": "modid does not exsits" # or other
+}
+```
++ Exception(application/json ? http status code)
+TBD
+
 
 
 
