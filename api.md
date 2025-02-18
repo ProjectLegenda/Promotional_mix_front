@@ -360,7 +360,7 @@ TBD
 # contents API
 
 ## Preview default parameter for empty project
-* GET /api/contents/${group_name}/${project_name}/default_parameters
+* GET /api/contents/${group_name}/${project_name}/meta_data
 + Request:(application/json)
 + Response:(application/json)
 ```
@@ -384,17 +384,17 @@ TBD
 {
     "channel_layout":int # from ["7","9","customized"],
 
-    "channel_agg_rule":{ str:[str,str],str:[str]}, #  "new_column_name1":["old_column_name1","old_column_name2"] --> new_column_name is user input, "old_column_name" is element from /api/contents/${group_name}/${project_name}/empty/default_parameters key default_channel_list key channel_name
+    "channel_agg_rule":{ str:[str,str],str:[str]}, #  "new_column_name1":["old_column_name1","old_column_name2"] --> new_column_name is user input, "old_column_name" is element from /api/contents/${group_name}/${project_name}/empty/meta_data key default_channel_list key channel_name
 
     "prior":[
         "channel_name":str,
         "channel_prior":int
-    ], # all element from /api/contents/${group_name}/${project_name}/empty/default_parameters key default_channel_list
-    "segmentation_type": str $ get element from /api/contents/${group_name}/${project_name}/empty/default_parameters key default_segmentation_type_list
+    ], # all element from /api/contents/${group_name}/${project_name}/empty/meta_data key default_channel_list
+    "segmentation_type": str $ get element from /api/contents/${group_name}/${project_name}/empty/meta_data key default_segmentation_type_list
     
 }
 ```
-Response:(application/json)
++ Response:(application/json)
 ```
 {
     "status":int, # 1 success, 0 fail
