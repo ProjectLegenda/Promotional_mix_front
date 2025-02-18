@@ -45,3 +45,89 @@
         }
     ]
 }
+
+```
+## Create empty group
+* PUT /api/groups/${group_name}
++ Request (application/json)
++ Response:(application/json)
+```
+success:
+
+{
+    "status":1
+}
+```
+```
+fail:
+{
+    "status": 0,
+    "message": "Group_name has been used. Please rename"
+}
+
+```
++ Exception(application/json ? http stats code)
+TBD
+--------------------------------------
+## Delete exsting group
+* DELETE /api/groups/${group_name}
++ Request (application/json)
++ Response:(application/json)
+```
+{
+    "status":int   # 1 success, 0 fail
+}
+```
++ Exception(application/json ? http status code)
+TBD
+--------------------------------------
+## Rename exsting group
+* POST /api/groups/${group_name}/rename
++ Request (application/json)
+```
+{
+   "group_name_new": str
+}
+```
++ Response:(application/json)
+```
+{
+    "status":int   # 1 success, 0 fail
+}
+```
++ Exception(application/json ? http status code)
+```
+{
+    'status': 0,
+    'message':'old group_name do not exist'
+}
+```
+--------------------------------------
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
