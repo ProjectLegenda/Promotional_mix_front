@@ -359,7 +359,17 @@ TBD
 --------------------------------------
 # contents API
 
+## Preview default parameter for empty project
+* GET /api/contents/${group_name}/${project_name}/default_parameters
++ Request:(application/json)
++ Response:(application/json)
+```
+{
+    "default_channel_list":[] # for each project, there is a default_channel_list needed to be rendered for modeling pages
+    "default_segmentation_type_list": [] # as above
+}
 
+```
 
 
 
