@@ -212,12 +212,117 @@ or
 }
 
 
+--------------------------------------
+## Export excel project
+* GET /api/projects/${group_name}/${project_name}?action=export_excel
++ Request (application/json)
++ Response:(application/text/plain;charset=UTF-8)
+```
+{
+    "content": binary # file-octstream
+}
+```
++ Exception(application/json ? http status code)
+TBD
 
+## Export json project
+* GET /api/projects/${group_name}/${project_name}?action=export_json
++ Request (application/json)
++ Response:(application/json;charset=UTF-8)
+```
+{
+    "content": binary # file-octstream
+}
+```
++ Exception(application/json ? http status code)
+TBD
 
+--------------------------------------
 
+## Import excel project
+* POST /api/projects/${group_name}/${project_name}?action=import_excel
++ Request:(application/text/plain;charset=UTF-8)
+```
+{
+    "content": binary, # file-octstream
+    "project_name": str # filename read from os
+}
+```
 
++ Response:(application/json)
+```
+#success
+{
+    "status":1
+}
 
+```
+```
+#fail
+{
+    "status": 0,
+    "message": "Project_name has been used. Please rename"
+}
+```
++ Exception(application/json ? http status code)
+TBD
 
+## Import json project
+* POST /api/projects/${group_name}/${project_name}?action=import_json
++ Request:(application/text/plain;charset=UTF-8)
+```
+{
+    "content": binary, # file-octstream
+    "project_name": str # filename read from os
+}
+```
+
++ Response:(application/json)
+```
+#success
+{
+    "status":1
+}
+
+```
+```
+#fail
+{
+    "status": 0,
+    "message": "Project_name has been used. Please rename"
+}
+```
++ Exception(application/json ? http status code)
+TBD
+
+--------------------------------------
+
+## Fork project
+* POST /api/projects/${group_name}/${project_name}/fork
++ Request:(application/json)
+```
+{
+    "project_name_new": str
+}
+```
+
++ Response:(application/json)
+```
+#success
+{
+    "status":1
+}
+
+```
+```
+#fail
+{
+    "status": 0,
+    "message": "Project_name has been used. Please rename"
+}
+```
++ Exception(application/json ? http status code)
+TBD
 
 
 
