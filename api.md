@@ -357,9 +357,9 @@ TBD
 TBD
 
 --------------------------------------
-# contents API
+# Contents API
 
-## Preview default parameter for empty project
+## Preview meta data for empty project
 * GET /api/contents/${group_name}/${project_name}/meta_data
 + Request:(application/json)
 + Response:(application/json)
