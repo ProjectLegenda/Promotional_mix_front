@@ -369,7 +369,9 @@ TBD
         "channel_name":str, 
         "channel_prior":int  
     ], # for each project, there is a default_channel_list needed to be rendered for modeling pages
-    "default_segmentation_type_list": [] # as above
+    "default_segmentation_type_list": [], # as above
+    "brand_name":"nucala",
+    "time_period_id": int # only month_id
 }
 
 ```
