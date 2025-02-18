@@ -365,14 +365,41 @@ TBD
 + Response:(application/json)
 ```
 {
-    "default_channel_list":[] # for each project, there is a default_channel_list needed to be rendered for modeling pages
+    "default_channel_list":[
+        "channel_name":str, 
+        "channel_prior":int  
+    ], # for each project, there is a default_channel_list needed to be rendered for modeling pages
     "default_segmentation_type_list": [] # as above
 }
 
 ```
+--------------------------------------
 
+## run modeling 
+* POST /api/contents/${group_name}/${project_name}/modeling
++ Request:(application/json)
+```
+{
+    "channel_layout":int # from ["7","9","customized"],
 
+    "channel_agg_rule":{ str:[str,str],str:[str]}, #  "new_column_name1":["old_column_name1","old_column_name2"] --> new_column_name is user input, "old_column_name" is element from /api/contents/${group_name}/${project_name}/empty/default_parameters key default_channel_list 
 
-
+    "prior":[
+        "channel_name":str,
+        "channel_prior":int
+    ],
+    "segmentation_type": str $ get element from /api/contents/${group_name}/${project_name}/empty/default_parameters key default_segmentation_type_list
+    
+}
+```
+Response:(application/json)
+```
+{
+    "status":int, # 1 success, 0 fail
+    "task_id":str  # this should be run id returned from Databricks api
+}
+```
++ Exception(application/json ? http status code)
+TBD                                                                                                                                                                                        
 
 
