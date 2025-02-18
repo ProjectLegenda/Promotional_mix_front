@@ -167,6 +167,33 @@ TBD
 }
 ```
 
+--------------------------------------
+## Rename exsting project
+* POST /api/groups/${group_name}/${project_name}/rename
++ Request (application/json)
+```
+{
+   "project_name_new": str
+}
+```
++ Response:(application/json)
+```
+{
+    "status":int   # 1 success, 0 fail
+}
+```
++ Exception(application/json ? http status code)
+```
+{
+    "status": 0,
+    "message":"old project_name is not correct"
+}
+or
+{
+    "status": 0,
+    "message":"group_name is not correct"
+}
+```
 
 
 
