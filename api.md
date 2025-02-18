@@ -16,12 +16,17 @@
 + Response:(application/json)
 ```
 {
+    "group_meta":{
+        {
+            "privileges":["create"]
+        }
+    },
     "group_list": [
         {
             "group_name": "Sulperazon",
             "created_datetime": "2023-02-07T06:58:04.450Z",
             "project_count": 0,
-            "privileges":["create","upload"]
+            "privileges":["create","upload"],
             "projects_list": []
         },
         {
