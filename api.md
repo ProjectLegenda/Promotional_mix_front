@@ -4,7 +4,7 @@
 --------------------------------------
 
 # Project sub page
-* GET /\$\{group\_name\}/\$\{project\_name\}
+* GET ``/${group_name}/${project_name}``
 + doc
 
 --------------------------------------
