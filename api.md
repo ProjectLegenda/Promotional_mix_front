@@ -413,7 +413,7 @@ TBD
     "task_status":str # one of the value {FAILURE|PENDING|RECEIVED|RETRY|REVOKED|STARTED|SUCCESS},
     "task_id":str  # get from databricks async api
 }
-
+```
 ## Revoke current model asnyc task
 * DELETE ``/api/contents/${group_name}/${project_name}/modeling/current_task``
 + Request:(application/json)
