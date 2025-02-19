@@ -404,4 +404,69 @@ TBD
 + Exception(application/json ? http status code)
 TBD                                                                                                                                                                                        
 
+## Get current model asnyc task
+* GET ``/api/contents/${group_name}/${project_name}/modeling/current_task``
++ Request:(application/json)
++ Response:(application/json)
+```
+{
+    "task_status":str # one of the value {FAILURE|PENDING|RECEIVED|RETRY|REVOKED|STARTED|SUCCESS},
+    "task_id":str  # get from databricks async api
+}
+
+## Revoke current model asnyc task
+* DELETE ``/api/contents/${group_name}/${project_name}/modeling/current_task``
++ Request:(application/json)
++ Response:(application/json)
+```
+{
+    "status":int # 1 success, 0 fail
+}
+```
++ Exception(application/json)
+TBD
+
+## Preview modeling output
+* GET ``/api/contents/${group_name}/${project_name}/modeling/metadata|parameters|result?=segmentation_type=Total Market``
++ Request:(application/json)
++ Response:(application/json)
+```
+#case
+#when metadata
+{
+    "Output time":"2025-07-03",
+    "Model time period":"2023011 - 202506",
+    "aggregate_channel_list":["F2F call"]
+}
+
+#when parameters
+#this parameters is rendered when the project stats is set to MODELING, on modeling paramters page.
+#when the project state is EMPTY, the modeling parameters page should be set by api ``/api/contents/${group_name}/${project_name}/meta_data``
+{                                                                                                                                                                                              "channel_layout":int # from ["7","9","customized"],                                                                                                                                                                                                                                                                                                                                   "channel_agg_rule":{ str:[str,str],str:[str]}, #  "new_column_name1":["old_column_name1","old_column_name2"] --> new_column_name is user input, "old_column_name" is element from /api/contents/${group_name}/${project_name}/empty/meta_data key default_channel_list key channel_name
+
+    "prior":[
+        "channel_name":str,
+        "channel_prior":int
+    ], # all element from /api/contents/${group_name}/${project_name}/empty/meta_data key default_channel_list
+    "segmentation_type": str $ get element from /api/contents/${group_name}/${project_name}/empty/meta_data key default_segmentation_type_list
+
+}
+#when result with segmentation_type parameter
+{
+    "Total Cost":"1,453M",
+    "Total Sales":"1,960M",
+    "Total Cost/Total Sales": "74.13%",
+    "Cost Distribution": object , # this structure is depending on front end object layout of circle graph
+    "Current Unit Price": Datframe to dict layout?
+    "Cost by Channels VS Total sales trend": object, # this structure is depending on front end object layout of line graph     
+    "Touch Points by Channel VS Total Sales Trend" : object, # this structure is depending on front end object layout of line graph
+    "Promotion vs Non-promotion": object, this structure is depending on front end object layout of bar graph
+    "Total promotion contribution": object,  this structure is depending on front end object layout of circle graph
+    "ROI/MROI":object,
+    "Response curve":object,
+    "Model Metrics": pandas.to_dict?
+}
+```
++ Exception(application/json ? http status code)
+TBD
 
