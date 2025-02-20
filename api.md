@@ -473,3 +473,58 @@ TBD
 + Exception(application/json ? http status code)
 TBD
 
+
+--------------------------------------
+
+## Add simulation
+* PUT ``/api/contents/${group_name}/${project_name}/simulation/add``
++ Request:(application/json)
+```
+{
+    "simulation_name":str
+}
+```
++ Response:(application/json)
+```
+{
+    "status":1, # successfully
+    "simulation_id": int
+}
+```
+## Run simulation
+* POST ``/api/contents/${group_name}/${project_name}/simulation/run``
++ Request:(application/json)
+```
+{
+    "simulation_id":int # simulation_id
+    "Optimization Type" : "Fixed Budget"|"MCCP suggestion", 
+    "Time Period": int, #months
+    "Budget": int,
+    "Unit Price and Constraints': [
+
+        {
+            "Channel":"F2F call","
+            "Unit Price":"float", 
+            "If changes":"unchanged",
+            "Change percentage":float, 
+            "Channel Contraint":bool, 
+            "Min Spend": float,
+            "Max Spend": float
+        }
+    ]
+}
+``` 
++ Response:(application/json)
+```
+{
+    "status":int, # 1 success, 0 fail
+    "task_id":str  # this should be run id returned from Databricks api
+}
+
+```
+
+
+
+
+
+
