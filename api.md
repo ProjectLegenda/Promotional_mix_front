@@ -586,15 +586,31 @@ TBD
 + Request:(application/json)
 ```
 {
-    simulatoin_id:int,
+    simulation_id:int,
 }
 
 ```
 + Response:(application/json)
 ```
 {
-    "status":1 # other wise 0
+    "status":1, # other wise 0
     "Message": str # returned from backend
 }
 ```
+## Delete simulation
+* DELETE ``/api/contents/${group_name}/${project_name}/simulation``
++ Request:(application/json)
+```
+{
+    "simulation_id":int,
+}
+```
++ Response:(application/json)
+```
+{
+    "status":1, # other wise0
+    "Message":str
+}
+```
+
 
