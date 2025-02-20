@@ -538,7 +538,7 @@ TBD
 }
 
 ```
-## Check current async task and delete is the same as modeling one
+## Check current async task and Delete current task is the same as modeling one
 
 ## Preview simulations
 * GET ``/api/contents/${group_name}/${project_name}/simulation/list``
@@ -570,9 +570,20 @@ TBD
     ]
 }
 ```
+## Publish simulation
+* POST ``/api/contents/${group_name}/${project_name}/simulation/publish``
++ Request:(application/json)
+```
+{
+    simulatoin_id:int,
+}
 
-
-
-
-
+```
++ Response:(application/json)
+```
+{
+    "status":1 # other wise 0
+    "Message": str # returned from backend
+}
+```
 
