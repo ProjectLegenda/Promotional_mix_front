@@ -498,11 +498,22 @@ TBD
 + Response:(application/json)
 ```
 {
+    "Optimization Type" : "MCCP suggestion",
+    "Time Period": 6, #months
+    "Budget": 0,
+    "Unit Price and Constraints': [
 
-
-
-
-
+        {
+            "Channel":"F2F call",
+            "Unit Price": float,
+            "If changes":"unchanged",
+            "Change percentage":0,
+            "Channel Contraint":bool,
+            "Min Spend": float,
+            "Max Spend": float,
+            "field_configurable":["Unit Price","Min Spend","Max Spend"]
+        }
+    ]
 
 }
 ```
