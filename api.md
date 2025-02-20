@@ -491,6 +491,22 @@ TBD
     "simulation_id": int
 }
 ```
+
+
+## Preview Simulation metadata
+* GET ``/api/contents/${group_name}/${project_name}/simulation/meta_data``
++ Response:(application/json)
+```
+{
+
+
+
+
+
+
+}
+```
+
 ## Run simulation
 * POST ``/api/contents/${group_name}/${project_name}/simulation/run``
 + Request:(application/json)
@@ -521,6 +537,38 @@ TBD
     "task_id":str  # this should be run id returned from Databricks api
 }
 
+```
+## Check current async task and delete is the same as modeling one
+
+## Preview simulations
+* GET ``/api/contents/${group_name}/${project_name}/simulation/list``
++ Response:(application/json)
+```
+{
+    "simulation_list":[
+         {   
+              "simulation_id":int,
+              "simulation_name": str,
+              "simulation_parameters":{}, # this format is exactly the same as the run api ``/api/contents/${group_name}/${project_name}/simulation/run``
+              "Optimal Channel Performance": pandas.to_dict() structure,
+              "Current Chaneel Performance": pandas.to_dict() structure,
+              "Simulated Performance":{
+                  "Promotion VS Non-promotion": object, layout depending on frontend bar graph
+                  "Total promotion Contribution": object, layout depending on front end circle graph
+                  "ROI/MROI":object this is nested object,  layout depending on front end line graph
+                  "Cost Distribution": object, layout depending on front end circle graph
+                  "Caculated Unit Price": pandas.to_dict()
+              },
+              "Current Performance":{
+                  "Promotion VS Non-promotion": object, layout depending on frontend bar graph
+                  "Total promotion Contribution": object, layout depending on front end circle graph
+                  "ROI/MROI":object this is nested object,  layout depending on front end line graph
+                  "Cost Distribution": object, layout depending on front end circle graph
+                  "Caculated Unit Price": pandas.to_dict()
+              },
+         }
+    ]
+}
 ```
 
 
