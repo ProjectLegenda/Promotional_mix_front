@@ -481,8 +481,10 @@ TBD
 + Request:(application/json)
 ```
 {
-    "simulation_name":str
-}
+    "simulation_name":str,
+    "Optimization Type": str, #"MCCP suggestion"|"Fixed Budget"
+    "MCCP cycle":int # 20250225 month_id like integer representing year/month
+} 
 ```
 + Response:(application/json)
 ```
@@ -498,7 +500,7 @@ TBD
 + Response:(application/json)
 ```
 {
-    "Optimization Type" : "MCCP suggestion",
+    "Optimization Type" : str, # "MCCP suggestion"|"Fixed Budget"
     "Time Period": 6, #months
     "Budget": 0,
     "Unit Price and Constraints': [
