@@ -382,7 +382,7 @@ TBD
 + Request:(application/json)
 ```
 {
-    "channel_layout":int # from ["7","9","customized"],
+    "channel_layout":str # from ["7","9","customized"],
 
     "channel_agg_rule":{ str:[str,str],str:[str]}, #  "new_column_name1":["old_column_name1","old_column_name2"] --> new_column_name is user input, "old_column_name" is element from /api/contents/${group_name}/${project_name}/empty/meta_data key default_channel_list key channel_name
 
