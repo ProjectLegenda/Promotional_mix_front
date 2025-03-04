@@ -18,7 +18,7 @@
 {
     "group_meta":{
         {
-            "privileges":["create"]
+            "privileges":["create"] # this field is used to decide whether to render 'New Group' bottom on the group page
         }
     },
     "group_list": [
