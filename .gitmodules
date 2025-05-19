@@ -1,0 +1,3 @@
+[submodule "lightweightmmm"]
+	path = lightweightmmm
+	url = https://iqvia.gitlab-dedicated.com/rxcorp/china_aa/lightweight_mmm_promomix.git
