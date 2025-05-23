@@ -26,7 +26,8 @@ SECRET_KEY = 'django-insecure-_6do$!^kiux_cd7@p2d4)tp!#(mtk1#d+r+k5qfkkmm=^5)dw2
 DEBUG = True
 
 ALLOWED_HOSTS = []
-
+# ALLOWED_HOSTS = ['*']
+# ALLOWED_HOSTS = ['shauapp003p.rxcorp.com','127.0.0.1']
 
 # Application definition
 
@@ -37,6 +38,7 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'api',
 ]
 
 MIDDLEWARE = [
@@ -79,6 +81,16 @@ DATABASES = {
     }
 }
 
+# DATABASES = {
+#     'default': {
+#         'ENGINE': 'django.db.backends.postgresql',
+#         'NAME': 'cn1-rx-mprodev01-pgsqldb00001',                      
+#         'USER': 'appuser',
+#         'PASSWORD': 'AcOeSuYq097184!',
+#         'HOST': 'shauapp002p.internal.imsglobal.com',
+#         'PORT': '5432',
+#     }
+# }
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators

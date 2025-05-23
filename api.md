@@ -616,3 +616,88 @@ TBD
 ```
 
 
+
+--------------------------------------
+# Django ORM model:
++ There should be 5 Models in Django ORM, 3 for data and 2 for status control
++ rawdata,modeling,simulation
+
+```
+from django.db import models
+
+class group(models.Model):
+    group_name = models.CharField(max_length=255, unique=True,primary_key=True)
+    created_datetime = models.DateTimeField(auto_now_add=True)
+    delete_datetime = models.DateTimeField(null=True)
+    delete_flag = models.BooleanField(null=True)
+    project_count=  models.IntegerField(default=0) 
+    group_privileges=models.CharField(max_length=500)  
+
+
+class projects(models.Model):
+    project_name = models.CharField(max_length=255, unique=True)
+    project_status = models.CharField(max_length=30) # 枚举值 ["RAWDATA","MODELING","SIMULATION"]
+    mcmc_current_task_id = models.CharField(max_length=100, null=True)
+    simulation_current_task_id = models.CharField(max_length=100, null=True)
+    simulations_list=models.CharField(max_length=500, null=True) #tbd
+    created_datetime = models.DateTimeField(auto_now_add=True)
+    updated_datetime = models.DateTimeField(auto_now=True)
+    delete_datetime = models.DateTimeField(null=True)
+    delete_flag = models.BooleanField(null=True)
+    group = models.ForeignKey(group, on_delete=models.CASCADE)
+    project_privileges=models.CharField(max_length=500)     
+
+class rawdata(models.Model):
+    
+    df_rawdata = models.TextField()
+    df_data_abothers== models.TextField()
+    brand_name= models.TextField()
+    time_period_id= models.TextField()
+    data_version_id= models.TextField()
+    ori_channel_list models.TextField()
+    ori_channel_prior= models.TextField()
+    ori_segment= models.TextField()
+    last = models.BooleanField()
+    projects = models.ForeignKey(projects, on_delete=models.CASCADE)
+
+class mmm(models.Model):
+    
+    parameters= models.TextField()
+    agg_chnl_list= models.TextField()
+    segmentation_type= models.TextField()
+    rawdata_unscaled_dict = models.TextField()
+    rawdata_scaled_dict = models.TextField()
+    digital_gsk_impute = models.TextField()
+    average_pirce_orig = models.TextField()
+    average_pirce_agg= models.TextField()
+    average_count_orig= models.TextField()
+    average_count_agg= models.TextField()
+    total_cost_sales_ratio= models.TextField()
+    cost_dist= models.TextField()
+    line_trend_dist= models.TextField()
+    extra_features_1= models.TextField()
+    r_square_mape= models.TextField()
+    channel_contribution= models.TextField() 
+    base_contribution= models.TextField()
+    roi_mroi= models.TextField()
+    mmm= models.TextField()
+    last = models.BooleanField()
+    projects = models.ForeignKey(projects, on_delete=models.CASCADE)
+
+class simulation(models.Model):
+
+    pk_id=models.AutoField(primary_key=True)
+    simulation_name= models.TextField()
+    parameters= models.TextField()
+    optimization_output = models.TextField()
+    optimization_type=models.TextField()
+    optimal_channel_performance=models.TextField()
+    current_channel_performence=models.TextField()
+    simulated_promotion_base=models.TextField()
+    simulated_channel_contribution=models.TextField()
+    simulated_roi_mroi=models.TextField()
+    simulated_cost_dist=models.TextField()
+    simulated_unit_price=models.TextField()
+    last = models.BooleanField()
+    projects = models.ForeignKey(projects, on_delete=models.CASCADE)
+```
