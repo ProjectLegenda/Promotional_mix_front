@@ -1,28 +1,19 @@
 # Index
-
-- GET /index
-
-* doc
-
----
+* GET /index
++ doc
+--------------------------------------
 
 # Project sub page
+* GET ``/${group_name}/${project_name}``
++ doc
 
-- GET `/${group_name}/${project_name}`
-
-* doc
-
----
-
+--------------------------------------
 # GROUP API
 
 ## Get group list
-
-- GET /api/groups
-
-* Request (application/json)
-* Response:(application/json)
-
+* GET /api/groups
++ Request (application/json)
++ Response:(application/json)
 ```
 {
     "group_meta":{
@@ -56,14 +47,10 @@
 }
 
 ```
-
 ## Create empty group
-
-- PUT /api/groups/${group_name}
-
-* Request (application/json)
-* Response:(application/json)
-
+* PUT /api/groups/${group_name}
++ Request (application/json)
++ Response:(application/json)
 ```
 success:
 
@@ -71,7 +58,6 @@ success:
     "status":1
 }
 ```
-
 ```
 fail:
 {
@@ -80,52 +66,36 @@ fail:
 }
 
 ```
-
-- Exception(application/json ? http stats code)
-  TBD
-
----
-
++ Exception(application/json ? http stats code)
+TBD
+--------------------------------------
 ## Delete exsting group
-
-- DELETE /api/groups/${group_name}
-
-* Request (application/json)
-* Response:(application/json)
-
+* DELETE /api/groups/${group_name}
++ Request (application/json)
++ Response:(application/json)
 ```
 {
     "status":int   # 1 success, 0 fail
 }
 ```
-
-- Exception(application/json ? http status code)
-  TBD
-
----
-
++ Exception(application/json ? http status code)
+TBD
+--------------------------------------
 ## Rename exsting group
-
-- POST /api/groups/${group_name}/rename
-
-* Request (application/json)
-
+* POST /api/groups/${group_name}/rename
++ Request (application/json)
 ```
 {
    "group_name_new": str
 }
 ```
-
-- Response:(application/json)
-
++ Response:(application/json)
 ```
 {
     "status":int   # 1 success, 0 fail
 }
 ```
-
-- Exception(application/json ? http status code)
-
++ Exception(application/json ? http status code)
 ```
 {
     'status': 0,
@@ -133,17 +103,13 @@ fail:
 }
 ```
 
----
-
+--------------------------------------
 # PROJECT API
 
 ## Get project list
-
-- GET /api/${group_name}/projects
-
-* Request (application/json)
-* Response:(application/json)
-
+* GET /api/${group_name}/projects
++ Request (application/json)
++ Response:(application/json)
 ```
 {
     "group_name": "sulperzon",
@@ -168,12 +134,10 @@ fail:
 
 ```
 
+
 ## Create empty project
-
-- PUT `/api/projects/${group_name}/${project_name}`
-
-* Request (application/json)
-
+* PUT ``/api/projects/${group_name}/${project_name}``
++ Request (application/json)
 ```
 {
     "brand_name":"nucala",
@@ -182,15 +146,13 @@ fail:
 
 ```
 
-- Response:(application/json)
-
++ Response:(application/json)
 ```
 #success
 {
     "status":1 success
 }
 ```
-
 ```
 #fail
 {
@@ -198,9 +160,7 @@ fail:
     "message": "Project_name has been used. Please rename"
 }
 ```
-
-- Exception(application/json ? http stats code)
-
++ Exception(application/json ? http stats code)
 ```
 {
     "status": 0,
@@ -208,30 +168,22 @@ fail:
 }
 ```
 
----
-
+--------------------------------------
 ## Rename exsting project
-
-- POST `/api/groups/${group_name}/${project_name}/rename`
-
-* Request (application/json)
-
+* POST ``/api/groups/${group_name}/${project_name}/rename``
++ Request (application/json)
 ```
 {
    "project_name_new": str
 }
 ```
-
-- Response:(application/json)
-
++ Response:(application/json)
 ```
 {
     "status":int   # 1 success, 0 fail
 }
 ```
-
-- Exception(application/json ? http status code)
-
++ Exception(application/json ? http status code)
 ```
 {
     "status": 0,
@@ -244,69 +196,53 @@ or
 }
 ```
 
----
-
+--------------------------------------
 ## Delete exsting project
-
-- DELETE `/api/projects/${group_name}/${project_name}`
-
-* Request (application/json)
-* Response:(application/json)
-
+* DELETE ``/api/projects/${group_name}/${project_name}``
++ Request (application/json)
++ Response:(application/json)
 ```
 {
     "status":int   # 1 success, 0 faile
 }
 ```
++ Exception(application/json ? http status code)
+{
+    "status":0,
+    "Message":"project_name is not correct"
+}
 
-- Exception(application/json ? http status code)
-  {
-  "status":0,
-  "Message":"project_name is not correct"
-  }
 
----
-
+--------------------------------------
 ## Export excel project
-
-- GET `/api/projects/${group_name}/${project_name}?action=export_excel`
-
-* Request (application/json)
-* Response:(application/text/plain;charset=UTF-8)
-
+* GET ``/api/projects/${group_name}/${project_name}?action=export_excel``
++ Request (application/json)
++ Response:(application/text/plain;charset=UTF-8)
 ```
 {
     "content": binary # file-octstream
 }
 ```
-
-- Exception(application/json ? http status code)
-  TBD
++ Exception(application/json ? http status code)
+TBD
 
 ## Export json project
-
-- GET `/api/projects/${group_name}/${project_name}?action=export_json`
-
-* Request (application/json)
-* Response:(application/json;charset=UTF-8)
-
+* GET ``/api/projects/${group_name}/${project_name}?action=export_json``
++ Request (application/json)
++ Response:(application/json;charset=UTF-8)
 ```
 {
     "content": binary # file-octstream
 }
 ```
++ Exception(application/json ? http status code)
+TBD
 
-- Exception(application/json ? http status code)
-  TBD
-
----
+--------------------------------------
 
 ## Import excel project
-
-- POST `/api/projects/${group_name}/${project_name}?action=import_excel`
-
-* Request:(application/text/plain;charset=UTF-8)
-
+* POST ``/api/projects/${group_name}/${project_name}?action=import_excel``
++ Request:(application/text/plain;charset=UTF-8)
 ```
 {
     "content": binary, # file-octstream
@@ -314,8 +250,7 @@ or
 }
 ```
 
-- Response:(application/json)
-
++ Response:(application/json)
 ```
 #success
 {
@@ -323,7 +258,6 @@ or
 }
 
 ```
-
 ```
 #fail
 {
@@ -331,16 +265,12 @@ or
     "message": "Project_name has been used. Please rename"
 }
 ```
-
-- Exception(application/json ? http status code)
-  TBD
++ Exception(application/json ? http status code)
+TBD
 
 ## Import json project
-
-- POST `/api/projects/${group_name}/${project_name}?action=import_json`
-
-* Request:(application/text/plain;charset=UTF-8)
-
+* POST ``/api/projects/${group_name}/${project_name}?action=import_json``
++ Request:(application/text/plain;charset=UTF-8)
 ```
 {
     "content": binary, # file-octstream
@@ -348,8 +278,7 @@ or
 }
 ```
 
-- Response:(application/json)
-
++ Response:(application/json)
 ```
 #success
 {
@@ -357,7 +286,6 @@ or
 }
 
 ```
-
 ```
 #fail
 {
@@ -365,26 +293,21 @@ or
     "message": "Project_name has been used. Please rename"
 }
 ```
++ Exception(application/json ? http status code)
+TBD
 
-- Exception(application/json ? http status code)
-  TBD
-
----
+--------------------------------------
 
 ## Fork project
-
-- POST `/api/projects/${group_name}/${project_name}/fork`
-
-* Request:(application/json)
-
+* POST ``/api/projects/${group_name}/${project_name}/fork``
++ Request:(application/json)
 ```
 {
     "project_name_new": str
 }
 ```
 
-- Response:(application/json)
-
++ Response:(application/json)
 ```
 #success
 {
@@ -392,7 +315,6 @@ or
 }
 
 ```
-
 ```
 #fail
 {
@@ -400,26 +322,23 @@ or
     "message": "Project_name has been used. Please rename"
 }
 ```
++ Exception(application/json ? http status code)
+TBD
 
-- Exception(application/json ? http status code)
-  TBD
+
 
 ## Share project
-
-- POST `/api/projects/${group_name}/${project_name}/share`
-
-* Request:(application/json)
-
+* POST ``/api/projects/${group_name}/${project_name}/share``
++ Request:(application/json)
 ```
 {
     "modid": str,
     "type": str # modid or email address
-
+    
 }
 ```
 
-- Response:(application/json)
-
++ Response:(application/json)
 ```
 #success
 {
@@ -427,7 +346,6 @@ or
 }
 
 ```
-
 ```
 #fail
 {
@@ -435,26 +353,21 @@ or
     "message": "modid does not exsits" # or other
 }
 ```
++ Exception(application/json ? http status code)
+TBD
 
-- Exception(application/json ? http status code)
-  TBD
-
----
-
+--------------------------------------
 # Contents API
 
 ## Preview meta data for empty project
-
-- GET `/api/contents/${group_name}/${project_name}/meta_data`
-
-* Request:(application/json)
-* Response:(application/json)
-
+* GET ``/api/contents/${group_name}/${project_name}/meta_data``
++ Request:(application/json)
++ Response:(application/json)
 ```
 {
     "default_channel_list":[
-        "channel_name":str,
-        "channel_prior":int
+        "channel_name":str, 
+        "channel_prior":int  
     ], # for each project, there is a default_channel_list needed to be rendered for modeling pages
     "default_segmentation_type_list": [], # as above
     "brand_name":"nucala",
@@ -462,15 +375,11 @@ or
 }
 
 ```
+--------------------------------------
 
----
-
-## Run modeling
-
-- POST `/api/contents/${group_name}/${project_name}/modeling`
-
-* Request:(application/json)
-
+## Run modeling 
+* POST ``/api/contents/${group_name}/${project_name}/modeling``
++ Request:(application/json)
 ```
 {
     "channel_layout":str # from ["7","9","customized"],
@@ -482,59 +391,45 @@ or
         "channel_prior":int
     ], # all element from /api/contents/${group_name}/${project_name}/empty/meta_data key default_channel_list
     "segmentation_type": str $ get element from /api/contents/${group_name}/${project_name}/empty/meta_data key default_segmentation_type_list
-
+    
 }
 ```
-
-- Response:(application/json)
-
++ Response:(application/json)
 ```
 {
     "status":int, # 1 success, 0 fail
     "task_id":str  # this should be run id returned from Databricks api
 }
 ```
-
-- Exception(application/json ? http status code)
-  TBD
++ Exception(application/json ? http status code)
+TBD                                                                                                                                                                                        
 
 ## Get current model asnyc task
-
-- GET `/api/contents/${group_name}/${project_name}/modeling/current_task`
-
-* Request:(application/json)
-* Response:(application/json)
-
+* GET ``/api/contents/${group_name}/${project_name}/modeling/current_task``
++ Request:(application/json)
++ Response:(application/json)
 ```
 {
     "task_status":str # one of the value {FAILURE|PENDING|RECEIVED|RETRY|REVOKED|STARTED|SUCCESS},
     "task_id":str  # get from databricks async api
 }
 ```
-
 ## Revoke current model asnyc task
-
-- DELETE `/api/contents/${group_name}/${project_name}/modeling/current_task`
-
-* Request:(application/json)
-* Response:(application/json)
-
+* DELETE ``/api/contents/${group_name}/${project_name}/modeling/current_task``
++ Request:(application/json)
++ Response:(application/json)
 ```
 {
     "status":int # 1 success, 0 fail
 }
 ```
-
-- Exception(application/json)
-  TBD
++ Exception(application/json)
+TBD
 
 ## Preview modeling output
-
-- GET `/api/contents/${group_name}/${project_name}/modeling/metadata|parameters|result?=segmentation_type=Total Market`
-
-* Request:(application/json)
-* Response:(application/json)
-
+* GET ``/api/contents/${group_name}/${project_name}/modeling/metadata|parameters|result?=segmentation_type=Total Market``
++ Request:(application/json)
++ Response:(application/json)
 ```
 #case
 #when metadata
@@ -566,7 +461,7 @@ or
     "Total Cost/Total Sales": "74.13%",
     "Cost Distribution": object , # this structure is depending on front end object layout of circle graph
     "Current Unit Price": Datframe to dict layout?
-    "Cost by Channels VS Total sales trend": object, # this structure is depending on front end object layout of line graph
+    "Cost by Channels VS Total sales trend": object, # this structure is depending on front end object layout of line graph     
     "Touch Points by Channel VS Total Sales Trend" : object, # this structure is depending on front end object layout of line graph
     "Promotion vs Non-promotion": object, this structure is depending on front end object layout of bar graph
     "Total promotion contribution": object,  this structure is depending on front end object layout of circle graph
@@ -575,28 +470,23 @@ or
     "Model Metrics": pandas.to_dict?
 }
 ```
++ Exception(application/json ? http status code)
+TBD
 
-- Exception(application/json ? http status code)
-  TBD
 
----
+--------------------------------------
 
 ## Add simulation
-
-- PUT `/api/contents/${group_name}/${project_name}/simulation/add`
-
-* Request:(application/json)
-
+* PUT ``/api/contents/${group_name}/${project_name}/simulation/add``
++ Request:(application/json)
 ```
 {
     "simulation_name":str,
     "Optimization Type": str, #"MCCP suggestion"|"Fixed Budget"
     "MCCP cycle":int # 20250225 month_id like integer representing year/month
-}
+} 
 ```
-
-- Response:(application/json)
-
++ Response:(application/json)
 ```
 {
     "status":1, # successfully
@@ -604,12 +494,10 @@ or
 }
 ```
 
+
 ## Preview Simulation metadata
-
-- GET `/api/contents/${group_name}/${project_name}/simulation/meta_data`
-
-* Response:(application/json)
-
+* GET ``/api/contents/${group_name}/${project_name}/simulation/meta_data``
++ Response:(application/json)
 ```
 {
     "Optimization Type" : str, # "MCCP suggestion"|"Fixed Budget"
@@ -633,34 +521,29 @@ or
 ```
 
 ## Run simulation
-
-- POST `/api/contents/${group_name}/${project_name}/simulation/run`
-
-* Request:(application/json)
-
+* POST ``/api/contents/${group_name}/${project_name}/simulation/run``
++ Request:(application/json)
 ```
 {
     "simulation_id":int # simulation_id
-    "Optimization Type" : "Fixed Budget"|"MCCP suggestion",
+    "Optimization Type" : "Fixed Budget"|"MCCP suggestion", 
     "Time Period": int, #months
     "Budget": int,
     "Unit Price and Constraints': [
 
         {
             "Channel":"F2F call","
-            "Unit Price":"float",
+            "Unit Price":"float", 
             "If changes":"unchanged",
-            "Change percentage":float,
-            "Channel Contraint":bool,
+            "Change percentage":float, 
+            "Channel Contraint":bool, 
             "Min Spend": float,
             "Max Spend": float
         }
     ]
 }
-```
-
-- Response:(application/json)
-
+``` 
++ Response:(application/json)
 ```
 {
     "status":int, # 1 success, 0 fail
@@ -668,19 +551,15 @@ or
 }
 
 ```
-
 ## Check current async task and Delete current task is the same as modeling one
 
 ## Preview simulations
-
-- GET `/api/contents/${group_name}/${project_name}/simulation/list`
-
-* Response:(application/json)
-
+* GET ``/api/contents/${group_name}/${project_name}/simulation/list``
++ Response:(application/json)
 ```
 {
     "simulation_list":[
-         {
+         {   
               "simulation_id":int,
               "simulation_name": str,
               "simulation_parameters":{}, # this format is exactly the same as the run api ``/api/contents/${group_name}/${project_name}/simulation/run``
@@ -704,139 +583,34 @@ or
     ]
 }
 ```
-
 ## Publish simulation
-
-- POST `/api/contents/${group_name}/${project_name}/simulation/publish`
-
-* Request:(application/json)
-
+* POST ``/api/contents/${group_name}/${project_name}/simulation/publish``
++ Request:(application/json)
 ```
 {
     simulation_id:int,
 }
 
 ```
-
-- Response:(application/json)
-
++ Response:(application/json)
 ```
 {
     "status":1, # other wise 0
     "Message": str # returned from backend
 }
 ```
-
 ## Delete simulation
-
-- DELETE `/api/contents/${group_name}/${project_name}/simulation`
-
-* Request:(application/json)
-
+* DELETE ``/api/contents/${group_name}/${project_name}/simulation``
++ Request:(application/json)
 ```
 {
     "simulation_id":int,
 }
 ```
-
-- Response:(application/json)
-
++ Response:(application/json)
 ```
 {
     "status":1, # other wise0
     "Message":str
-}
-```
-
-## Permission List
-
-- GET /api/permissions
-
-* Request (application/json)
-* Response:(application/json)
-
-```
-[
-    {
-      id: 12324022,
-      name: 'name1',
-      role: 'Maintainer',
-      activity: ['change', 'remove'],
-      roleOptions: ['Maintainer', 'Guest'] # when change role
-    },
-    {
-      id: 12324023,
-      name: 'name2',
-      role: 'Owner',
-      activity: ['change', 'remove'],
-      roleOptions: ['Maintainer', 'Guest']
-    },
-
-]
-
-```
-
-## Add permission user
-
-- PUT /api/permission/add
-
-* Response:(application/json)
-* Request:(application/json)
-
-```
-{
-    "user_name":str,
-    "id": str
-    "role": str, #"Maintainer"|"Guest"
-}
-```
-
-- Response:(application/json)
-
-```
-{
-    "status":1, # successfully
-}
-```
-
-## Remove permission user
-
-- DELETE /api/permission/${id}
-
-* Request (application/json)
-* Response:(application/json)
-
-```
-{
-    "status":int   # 1 success, 0 fail
-}
-```
-
-## Update permission user
-
-- POST /api/permission/${id}/update
-
-* Request (application/json)
-
-```
-{
-   "role_new": str
-}
-```
-
-- Response:(application/json)
-
-```
-{
-    "status":int   # 1 success, 0 fail
-}
-```
-
-- Exception(application/json ? http status code)
-
-```
-{
-    'status': 0,
-    'message':'Failed to complete the update operation.'
 }
 ```
