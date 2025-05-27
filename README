@@ -1,0 +1,12 @@
+python=3.10
+
+Installation:
+    pip install < requirements
+
+
+Run CELERY application:
+    python -m  celery -A mysite worker -l INFO 
+
+
+Run Django test server:
+    python manage.py runserver 

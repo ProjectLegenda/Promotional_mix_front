@@ -18,7 +18,7 @@
 {
     "group_meta":{
         {
-            "privileges":["create"] # this field is used to decide whether to render 'New Group' bottom on the group page
+            "group_privileges":["create"] # this field is used to decide whether to render 'New Group' bottom on the group page
         }
     },
     "group_list": [
@@ -26,7 +26,7 @@
             "group_name": "Sulperazon",
             "created_datetime": "2023-02-07T06:58:04.450Z",
             "project_count": 0,
-            "privileges":["create","upload"],
+            "group_privileges":["create","upload"],
             "projects_list": []
         },
         {
@@ -38,7 +38,7 @@
                     "project_name": "aaa_1",
                     "project_status": "MODELING",
                     "updated_datetime": "2023-02-07T09:23:00.386Z"
-                    "privileges:["Enter","Copy","Share","Delete"]
+                    "project_privileges:["Enter","Copy","Share","Delete"]
                 }
             ]
 
@@ -118,14 +118,14 @@ TBD
             "project_name": "sulperzon_ge",
             "project_status": "MODELING",   # 项目的状态有以下枚举值 ["EMPTY","MODELING","SIMULATION"]
             "updated_datetime": "2023-02-07T07:35:10.862Z",
-            "privileges:["Enter","Copy","Share","Delete"],
+            "project_privileges:["Enter","Copy","Share","Delete"],
             "simulations_list": ["simulation1","simulation2"] #
         },
         {
             "project_name": "sulperzon_hbu",
             "project_status": "SIMULATION",
             "updated_datetime": "2023-01-09T00:00:00Z",
-            "privileges:["Enter","Copy","Share","Delete"],
+            "project_privileges:["Enter","Copy","Share","Delete"],
             "simulations_list": ["simulation1","simulation2"] #
         }
     ]
@@ -141,7 +141,8 @@ TBD
 ```
 {
     "brand_name":"nucala",
-    "time_period_id": int # only month_id
+    "time_period_id": int # only month_id,
+    "data_version_id":int #  date like 20250501
 }
 
 ```
@@ -372,6 +373,11 @@ TBD
     "default_segmentation_type_list": [], # as above
     "brand_name":"nucala",
     "time_period_id": int # only month_id
+    "data_version_id":int # date like 20250501
+    "AB_proportion_list":[
+        "AB_proportion_option":str, 
+        "AB_proportion":float  
+    ], # for each project, there is a AB_proportion_list needed to be rendered for simulation pages
 }
 
 ```
@@ -435,7 +441,7 @@ TBD
 #when metadata
 {
     "Output time":"2025-07-03",
-    "Model time period":"2023011 - 202506",
+    "Model time period":"202307 - 202506",
     "aggregate_channel_list":["F2F call"]
 }
 
@@ -513,7 +519,10 @@ TBD
             "Channel Contraint":bool,
             "Min Spend": float,
             "Max Spend": float,
-            "field_configurable":["Unit Price","Min Spend","Max Spend"]
+            # AB_proportion only for Optimization Type=Fixed Budget and default AB_proportion_option=no weight , default AB_proportion is null
+            "AB_proportion_option": "no_weight"|"past 12 months"|"past 6 months"|"past 3 months ago",  # get element from /api/contents/${group_name}/${project_name}/empty/meta_data key AB_porportion_list key AB_proportion_option ,
+            "AB_proportion":float,  # get element from /api/contents/${group_name}/${project_name}/empty/meta_data key AB_porportion_list key AB_proportion  (only for  F2F_CALL and HT channel)
+            "field_configurable":["Unit Price","Min Spend","Max Spend","AB_proportion"]
         }
     ]
 
@@ -538,7 +547,10 @@ TBD
             "Change percentage":float, 
             "Channel Contraint":bool, 
             "Min Spend": float,
-            "Max Spend": float
+            "Max Spend": float,
+            # only for Optimization Type=Fixed Budget and default AB_proportion_option=no weight , AB_proportion is null
+            "AB_proportion_option": "no_weight"|"past 12 months"|"past 6 months"|"past 3 months ago",  # get element from /api/contents/${group_name}/${project_name}/empty/meta_data key AB_porportion_list key AB_proportion_option  ,
+            "AB_proportion":float,  # get element from /api/contents/${group_name}/${project_name}/empty/meta_data key AB_porportion_list key AB_proportion  (only for  F2F_CALL and HT channel)
         }
     ]
 }
@@ -572,12 +584,13 @@ TBD
                   "Cost Distribution": object, layout depending on front end circle graph
                   "Caculated Unit Price": pandas.to_dict()
               },
-              "Current Performance":{
+              "Current Performance": # almost same as /api/contents/${group_name}/${project_name}/modeling/result?=segmentation_type=Total Market
+              {
                   "Promotion VS Non-promotion": object, layout depending on frontend bar graph
-                  "Total promotion Contribution": object, layout depending on front end circle graph
+                  "Total promotion contribution": object, layout depending on front end circle graph
                   "ROI/MROI":object this is nested object,  layout depending on front end line graph
                   "Cost Distribution": object, layout depending on front end circle graph
-                  "Caculated Unit Price": pandas.to_dict()
+                  "Current Unit Price": pandas.to_dict()
               },
          }
     ]
@@ -616,3 +629,88 @@ TBD
 ```
 
 
+
+--------------------------------------
+# Django ORM model:
++ There should be 5 Models in Django ORM, 3 for data and 2 for status control
++ rawdata,modeling,simulation
+
+```
+from django.db import models
+
+class group(models.Model):
+    group_name = models.CharField(max_length=255, unique=True,primary_key=True)
+    created_datetime = models.DateTimeField(auto_now_add=True)
+    delete_datetime = models.DateTimeField(null=True)
+    delete_flag = models.BooleanField(null=True)
+    project_count=  models.IntegerField(default=0) 
+    group_privileges=models.CharField(max_length=500)  
+
+
+class projects(models.Model):
+    project_name = models.CharField(max_length=255, unique=True)
+    project_status = models.CharField(max_length=30) # 枚举值 ["RAWDATA","MODELING","SIMULATION"]
+    mcmc_current_task_id = models.CharField(max_length=100, null=True)
+    simulation_current_task_id = models.CharField(max_length=100, null=True)
+    simulations_list=models.CharField(max_length=500, null=True) #tbd
+    created_datetime = models.DateTimeField(auto_now_add=True)
+    updated_datetime = models.DateTimeField(auto_now=True)
+    delete_datetime = models.DateTimeField(null=True)
+    delete_flag = models.BooleanField(null=True)
+    group = models.ForeignKey(group, on_delete=models.CASCADE)
+    project_privileges=models.CharField(max_length=500)     
+
+class rawdata(models.Model):
+    
+    df_rawdata = models.TextField()
+    df_data_abothers== models.TextField()
+    brand_name= models.TextField()
+    time_period_id= models.TextField()
+    data_version_id= models.TextField()
+    ori_channel_list models.TextField()
+    ori_channel_prior= models.TextField()
+    ori_segment= models.TextField()
+    last = models.BooleanField()
+    projects = models.ForeignKey(projects, on_delete=models.CASCADE)
+
+class mmm(models.Model):
+    
+    parameters= models.TextField()
+    agg_chnl_list= models.TextField()
+    segmentation_type= models.TextField()
+    rawdata_unscaled_dict = models.TextField()
+    rawdata_scaled_dict = models.TextField()
+    digital_gsk_impute = models.TextField()
+    average_pirce_orig = models.TextField()
+    average_pirce_agg= models.TextField()
+    average_count_orig= models.TextField()
+    average_count_agg= models.TextField()
+    total_cost_sales_ratio= models.TextField()
+    cost_dist= models.TextField()
+    line_trend_dist= models.TextField()
+    extra_features_1= models.TextField()
+    r_square_mape= models.TextField()
+    channel_contribution= models.TextField() 
+    base_contribution= models.TextField()
+    roi_mroi= models.TextField()
+    mmm= models.TextField()
+    last = models.BooleanField()
+    projects = models.ForeignKey(projects, on_delete=models.CASCADE)
+
+class simulation(models.Model):
+
+    simulation_id=models.AutoField(primary_key=True)
+    simulation_name= models.TextField()
+    parameters= models.TextField()
+    optimization_output = models.TextField()
+    optimization_type=models.TextField()
+    optimal_channel_performance=models.TextField()
+    current_channel_performence=models.TextField()
+    simulated_promotion_base=models.TextField()
+    simulated_channel_contribution=models.TextField()
+    simulated_roi_mroi=models.TextField()
+    simulated_cost_dist=models.TextField()
+    simulated_unit_price=models.TextField()
+    last = models.BooleanField()
+    projects = models.ForeignKey(projects, on_delete=models.CASCADE)
+```

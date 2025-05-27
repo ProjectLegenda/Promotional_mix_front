@@ -1,0 +1,7 @@
+*.pyc
+__pycache__
+.*
+!/.gitignore
+!/.gitmodules
+venv
+mysite/nohup.out
