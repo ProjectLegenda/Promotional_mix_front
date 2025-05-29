@@ -25,9 +25,9 @@ SECRET_KEY = 'django-insecure-_6do$!^kiux_cd7@p2d4)tp!#(mtk1#d+r+k5qfkkmm=^5)dw2
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+# ALLOWED_HOSTS = []
 # ALLOWED_HOSTS = ['*']
-# ALLOWED_HOSTS = ['shauapp003p.rxcorp.com','127.0.0.1']
+ALLOWED_HOSTS = ['shauapp003p.rxcorp.com','127.0.0.1','shauapp002p.internal.imsglobal.com']
 
 # Application definition
 
@@ -74,23 +74,37 @@ WSGI_APPLICATION = 'mysite.wsgi.application'
 # Database
 # https://docs.djangoproject.com/en/5.2/ref/settings/#databases
 
-DATABASES = {
-    'default': {
-        'ENGINE': 'django.db.backends.sqlite3',
-        'NAME': BASE_DIR / 'db.sqlite3',
-    }
-}
-
 # DATABASES = {
 #     'default': {
-#         'ENGINE': 'django.db.backends.postgresql',
-#         'NAME': 'cn1-rx-mprodev01-pgsqldb00001',                      
-#         'USER': 'appuser',
-#         'PASSWORD': 'AcOeSuYq097184!',
-#         'HOST': 'shauapp002p.internal.imsglobal.com',
-#         'PORT': '5432',
+#         'ENGINE': 'django.db.backends.sqlite3',
+#         'NAME': BASE_DIR / 'db.sqlite3',
 #     }
 # }
+
+DATABASES = {
+    'promotionmix': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'cn1-rx-mprodev01-pgsqldb00001',                      
+        'USER': 'appuser',
+        'PASSWORD': 'AcOeSuYq097184!',
+        'HOST': 'shauapp002p.internal.imsglobal.com',
+        'PORT': '5432',
+        'OPTIONS': {
+            'options': '-c search_path=promotionmix,public'
+        }
+    },
+    'default': {
+        'ENGINE': 'django.db.backends.postgresql',
+        'NAME': 'cn1-rx-mprodev01-pgsqldb00001',                      
+        'USER': 'appuser',
+        'PASSWORD': 'AcOeSuYq097184!',
+        'HOST': 'shauapp002p.internal.imsglobal.com',
+        'PORT': '5432',
+        'OPTIONS': {
+            'options': '-c search_path=promotionmix,public'
+        }
+    }
+}
 
 # Password validation
 # https://docs.djangoproject.com/en/5.2/ref/settings/#auth-password-validators

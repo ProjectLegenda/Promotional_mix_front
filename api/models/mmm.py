@@ -3,10 +3,10 @@ from django.db import models
 from .projects import projects
 
 class mmm(models.Model):
-    
-    parameters= models.TextField()
+
     agg_chnl_list= models.TextField()
     segmentation_type= models.TextField()
+    parameters= models.TextField()
     rawdata_unscaled_dict = models.TextField()
     rawdata_scaled_dict = models.TextField()
     digital_gsk_impute = models.TextField()
@@ -23,5 +23,5 @@ class mmm(models.Model):
     base_contribution= models.TextField()
     roi_mroi= models.TextField()
     mmm= models.TextField()
-    last = models.BooleanField()
+    last = models.BooleanField(default=1)
     projects = models.ForeignKey(projects, on_delete=models.CASCADE)
