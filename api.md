@@ -743,36 +743,48 @@ TBD
 
 ```
 from django.db import models
+from django.contrib.auth.models import User
 
-class role(models.Model):
-    user_id = models.CharField(max_length=255,primary_key=True)
+class role():
+
+    auth_user = models.OneToOneField(User, on_delete=models.CASCADE)
     name=models.CharField()
-    role=models.CharField(default='Guest')   # 枚举值 ["Guest","Maintainer","Owner"]
-    add_datetime= models.DateTimeField()
-    update_datetime= models.DateTimeField(null=True)
+    ROLE_CHOICES = [
+        (1, 'Guest'),  
+        (2, 'Maintainer'),
+        (3, 'Owner')
+    ]
+    role=models.IntegerField(choices=ROLE_CHOICES,default=1)   # 枚举值 ["Guest","Maintainer","Owner"]
+    created_datetime= models.DateTimeField(auto_now_add=True)
+    updated_datetime= models.DateTimeField(auto_now=True)
     delete_datetime = models.DateTimeField(null=True)
     is_active=models.BooleanField(default=1)
-    roleoptions=models.CharField()
-    activity=models.CharField()
+    roleoptions=models.CharField(null=True)
+    activity=models.CharField(null=True)
 
-class share_project(models.Model):
-    pk = models.CompositePrimaryKey("user_id", "project_name")
-    user_id = models.CharField() #选项导航栏guest的id options
-    msg=models.CharField(null=Ture) 
-    project_name =models.ForeignKey(Project, on_delete=models.CASCADE)
+
+class share(models.Model):
+
+    pk = models.CompositePrimaryKey("role_id", "projects_id")
+    role = models.ForeignKey(role, on_delete=models.CASCADE) 
+    projects =models.ForeignKey(projects, on_delete=models.CASCADE)
+    msg=models.CharField(null=True) 
 
 class group(models.Model):
+
     group_name = models.CharField(max_length=255, primary_key=True)
     created_datetime = models.DateTimeField(auto_now_add=True)
     delete_datetime = models.DateTimeField(null=True)
     is_delete = models.BooleanField(default=0)
     project_count=  models.IntegerField(default=0) 
-    group_privileges=models.CharField(max_length=500) # ['create group','create new analysis','upload']  
+    role=models.ForeignKey(role, on_delete=models.CASCADE) 
+
 
 class projects(models.Model):
-    pk = models.CompositePrimaryKey("group", "project_name")
+    
+    pk = models.CompositePrimaryKey("group_id", "project_name")
     project_name = models.CharField(max_length=255)
-    project_status = models.CharField(max_length=30) # 枚举值 ["EMPTY","MODELING","SIMULATION"]
+    project_status = models.CharField(max_length=30) # 枚举值tbd ["EMPTY","MODEL_RUNNING","MODEL","OUTPUT","SIMULATION_RUNNING""SIMULATION"]
     mcmc_current_task_id = models.CharField(max_length=100, null=True)
     simulation_current_task_id = models.CharField(max_length=100, null=True)
     simulations_list=models.CharField(max_length=500, null=True) #tbd
@@ -781,28 +793,27 @@ class projects(models.Model):
     delete_datetime = models.DateTimeField(null=True)
     is_delete = models.BooleanField(default=0)
     group = models.ForeignKey(group, on_delete=models.CASCADE)
-    project_privileges=models.CharField(max_length=500)   
     is_publish= models.BooleanField(default=0) 
-    user_id=models.ForeignKey(role, on_delete=models.CASCADE) 
+    role=models.ForeignKey(role, on_delete=models.CASCADE)
     
 class rawdata(models.Model):
     
     df_rawdata = models.TextField()
     df_data_ab_others== models.TextField()
-    brand_name= models.TextField()
-    time_period_id= models.TextField()
-    data_version_id= models.TextField()
+    brand_name= models.CharField()
+    time_period_id= models.CharField()
+    data_version_id= models.CharField()
     ori_channel_list models.TextField()
     ori_channel_prior= models.TextField()
     ori_segment= models.TextField()
-    last = models.BooleanField()
+    last = models.BooleanField(default=1)
     projects = models.ForeignKey(projects, on_delete=models.CASCADE)
 
 class mmm(models.Model):
     
-    parameters= models.TextField()
     agg_chnl_list= models.TextField()
     segmentation_type= models.TextField()
+    parameters= models.TextField()
     rawdata_unscaled_dict = models.TextField()
     rawdata_scaled_dict = models.TextField()
     digital_gsk_impute = models.TextField()
@@ -819,25 +830,25 @@ class mmm(models.Model):
     base_contribution= models.TextField()
     roi_mroi= models.TextField()
     mmm= models.TextField()
-    last = models.BooleanField()
+    last = models.BooleanField(default=1)
     projects = models.ForeignKey(projects, on_delete=models.CASCADE)
 
 class simulation(models.Model):
 
-    pk = models.CompositePrimaryKey("simulation_name", "projects")
-    simulation_name= models.CharField() 
-    parameters= models.TextField()
-    optimization_output = models.TextField()
+    pk = models.CompositePrimaryKey("simulation_name", "projects_id")
+    simulation_name= models.CharField
     optimization_type=models.TextField()
-    optimal_channel_performance=models.TextField()
-    current_channel_performence=models.TextField()
-    simulated_promotion_base=models.TextField()
-    simulated_channel_contribution=models.TextField()
-    simulated_roi_mroi=models.TextField()
-    simulated_cost_dist=models.TextField()
-    simulated_unit_price=models.TextField()
-    last = models.BooleanField()
+    parameters= models.TextField(null=True)
+    optimization_output = models.TextField(null=True)
+    optimal_channel_performance=models.TextField(null=True)
+    current_channel_performence=models.TextField(null=True)
+    simulated_promotion_base=models.TextField(null=True)
+    simulated_channel_contribution=models.TextField(null=True)
+    simulated_roi_mroi=models.TextField(null=True)
+    simulated_cost_dist=models.TextField(null=True)
+    simulated_unit_price=models.TextField(null=True)
+    last = models.BooleanField(default=1)
     projects = models.ForeignKey(projects, on_delete=models.CASCADE)
-    is_visible=models.BooleanField(default=0)
+    is_visible=models.BooleanField(default=1)
 
 ```
