@@ -32,13 +32,13 @@ ALLOWED_HOSTS = ['shauapp003p.rxcorp.com','127.0.0.1','shauapp002p.internal.imsg
 # Application definition
 
 INSTALLED_APPS = [
+    'api',
     'django.contrib.admin',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'api',
 ]
 
 MIDDLEWARE = [

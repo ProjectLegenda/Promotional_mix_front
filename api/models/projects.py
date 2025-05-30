@@ -1,5 +1,6 @@
 from django.db import models
 from .group import group
+from .role import role
 
 class projects(models.Model):
     

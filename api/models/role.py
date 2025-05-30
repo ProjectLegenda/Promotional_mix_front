@@ -1,7 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
 
-class role():
+class role(models.Model):
     auth_user = models.OneToOneField(User, on_delete=models.CASCADE)
     name=models.CharField()
     ROLE_CHOICES = [
