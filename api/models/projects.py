@@ -4,8 +4,7 @@ from .role import role
 
 class projects(models.Model):
     
-    pk = models.CompositePrimaryKey("group_id", "project_name")
-    project_name = models.CharField(max_length=255)
+    project_name = models.CharField(max_length=255, primary_key=True)
     project_status = models.CharField(max_length=30) # 枚举值tbd ["EMPTY","MODEL_RUNNING","MODEL","OUTPUT","SIMULATION_RUNNING""SIMULATION"]
     mcmc_current_task_id = models.CharField(max_length=100, null=True)
     simulation_current_task_id = models.CharField(max_length=100, null=True)

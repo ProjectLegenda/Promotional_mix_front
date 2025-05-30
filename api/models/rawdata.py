@@ -5,6 +5,7 @@ class rawdata(models.Model):
     
     df_rawdata = models.TextField()
     df_data_ab_others= models.TextField()
+    df_mccp= models.TextField()
     brand_name= models.CharField()
     time_period_id= models.CharField()
     data_version_id= models.CharField()
@@ -13,6 +14,5 @@ class rawdata(models.Model):
     ori_segment= models.TextField()
     last = models.BooleanField(default=1)
     projects = models.ForeignKey(projects, on_delete=models.CASCADE)
-
 
 

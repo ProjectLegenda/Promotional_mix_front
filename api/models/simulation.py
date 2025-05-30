@@ -4,7 +4,7 @@ from .projects import projects
 class simulation(models.Model):
 
     pk = models.CompositePrimaryKey("simulation_name", "projects_id")
-    simulation_name= models.CharField
+    simulation_name= models.CharField()
     optimization_type=models.TextField()
     parameters= models.TextField(null=True)
     optimization_output = models.TextField(null=True)
