@@ -13,6 +13,6 @@ class rawdata(models.Model):
     ori_channel_prior= models.TextField()
     ori_segment= models.TextField()
     last = models.BooleanField(default=1)
-    projects = models.ForeignKey(projects, on_delete=models.CASCADE)
+    projects = models.OneToOneField(projects, on_delete=models.CASCADE)
 
 
