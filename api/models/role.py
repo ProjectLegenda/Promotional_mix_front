@@ -3,7 +3,7 @@ from django.contrib.auth.models import User
 
 class role(models.Model):
     auth_user = models.OneToOneField(User, on_delete=models.CASCADE)
-    name=models.CharField()
+    name=models.CharField(null=True) #tbd
     ROLE_CHOICES = [
         (1, 'Guest'),  
         (2, 'Maintainer'),

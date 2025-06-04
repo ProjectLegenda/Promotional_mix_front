@@ -18,3 +18,5 @@ class simulation(models.Model):
     last = models.BooleanField(default=1)
     projects = models.ForeignKey(projects, on_delete=models.CASCADE)
     is_visible=models.BooleanField(default=1)
+    simulation_task_id = models.CharField(null=True)
+    simulation_task_status = models.CharField( null=True)

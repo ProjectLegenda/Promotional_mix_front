@@ -4,8 +4,8 @@ from .projects import projects
 class rawdata(models.Model):
     
     df_rawdata = models.TextField()
-    df_data_ab_others= models.TextField()
-    df_mccp= models.TextField()
+    df_data_ab_others= models.TextField(null=True) #formal：null=False
+    df_mccp= models.TextField(null=True)#formal：null=False
     brand_name= models.CharField()
     time_period_id= models.CharField()
     data_version_id= models.CharField()
