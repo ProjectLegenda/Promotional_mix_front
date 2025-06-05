@@ -43,7 +43,6 @@
                     "project_status": "MODELING",
                     "updated_datetime": "2023-02-07T09:23:00.386Z"
                     "project_privileges:["Publish","Enter","Copy","Share",'Rename',"Delete"]
-                    "is_publish":True
                 }
             ]
 
@@ -171,7 +170,7 @@ tbd
     "projects_list": [
         {
             "project_name": "Benlysta",
-            "project_status": "MODEL", # 项目的状态有以下枚举值tbd ["EMPTY","MODEL_RUNNING","MODEL","OUTPUT","SIMULATION_RUNNING","SIMULATION"]
+            "project_status": "MODEL", # 项目的状态有以下枚举值tbd ["EMPTY","MODEL_RUNNING","MODEL","OUTPUT","PRE_SIMULATION"，"SIMULATION_RUNNING","SIMULATION"]
             "updated_datetime": "2023-02-07T07:35:10.862Z",
             "project_privileges:["Publish","Enter","Copy","Share","Rename","Delete"],
             "simulations_list": {"simulation1":{"is_visible":0,"task_id": " ","task_status":" "},"simulation2":{"is_visible":1,"task_id":2222,"task_status":"SIMULATION_RUNNING"}}} 
@@ -295,7 +294,7 @@ or
 
 
 --------------------------------------
-## Export excel project
+## Export excel project（download data）
 * GET ``/api/projects/${group_name}/${project_name}?action=export_excel``
 + Request (application/json)
 + Response:(application/text/plain;charset=UTF-8)
@@ -323,36 +322,7 @@ TBD
 
 --------------------------------------
 
-## Import excel project
-* POST ``/api/projects/${group_name}/${project_name}?action=import_excel``
-+ Request:(application/text/plain;charset=UTF-8)
-```
-# 权限：Maintainer+Owner
-{
-    "content": binary, # file-octstream
-    "project_name": str # filename read from os
-}
-```
-
-+ Response:(application/json)
-```
-#success
-{
-    "status":1
-}
-
-```
-```
-#fail
-{
-    "status": 0,
-    "message": "Project_name has been used. Please rename"
-}
-```
-+ Exception(application/json ? http status code)
-TBD
-
-## Import json project
+## Import json project（upload button）
 * POST ``/api/projects/${group_name}/${project_name}?action=import_json``
 + Request:(application/text/plain;charset=UTF-8)
 ```
@@ -389,10 +359,10 @@ TBD
 + Request:(application/json)
 ```
 # 权限：Maintainer+Owner
-# 跨组fork 一个group只有creator自己的项目 ，非创建者fork 需fork到自己的group
+# 默认同组fork  ；可跨组fork？ tbd
 
 {
-    "group_name": str # groupname read from get api tbd (后端思路 id下对应的 /api/groups 下distinct的group_name),
+    "group_name": str # groupname read from get api tbd (logic： id下对应的 /api/groups 下distinct的group_name),
     "project_name_new": str
 }
 ```
@@ -721,28 +691,9 @@ TBD
     "status":1, # other wise 0
 }
 ```
-## simulation Visibility
-* get ``/api/contents/${group_name}/${project_name}/simulation_visibility``
-+ Request:(application/json)
-+ Response:(application/json)
-```
-# 权限：Maintainer creator+Owner
-{
-    "simulation1":False,
-    "simulation2":True
-}
-``` 
-
-```
-{
-    "status":1, # other wise 0
-}
-```
-
-
 
 ## simulation Visibility
-* POST ``/api/contents/${group_name}/${project_name}/${simulation_name}/...``
+* POST ``/api/contents/${group_name}/${project_name}//${simulation_name}/visibility``
 + Request:(application/json)
 ```
 # 权限：Maintainer creator+Owner
@@ -757,13 +708,13 @@ TBD
 }
 ```
 ## simulation Rename
-* POST /api/groups/${group_name}/rename
+* POST /api/groups/${group_name}/${project_name}/${simulation_name}/rename
 + Request (application/json)
 ```
 # 权限：Maintainer creator+ Owner 
 
 {
-   "group_name_new": str
+   "simulation_name_new": str
 }
 ```
 + Response:(application/json)
@@ -788,10 +739,9 @@ TBD
 from django.db import models
 from django.contrib.auth.models import User
 
-class role():
-
+class role(models.Model):
     auth_user = models.OneToOneField(User, on_delete=models.CASCADE)
-    name=models.CharField()
+    name=models.CharField(null=True) #tbd
     ROLE_CHOICES = [
         (1, 'Guest'),  
         (2, 'Maintainer'),
@@ -806,6 +756,7 @@ class role():
     activity=models.CharField(null=True)
 
 
+
 class share(models.Model):
 
     pk = models.CompositePrimaryKey("role_id", "projects_id")
@@ -814,27 +765,27 @@ class share(models.Model):
     msg=models.CharField(null=True) 
 
 class group(models.Model):
-
-    group_name = models.CharField(max_length=255, primary_key=True)
+    
+    group_name = models.CharField(max_length=255, unique=True)
     created_datetime = models.DateTimeField(auto_now_add=True)
-    delete_datetime = models.DateTimeField(null=True)
-    is_delete = models.BooleanField(default=0)
-    project_count=  models.IntegerField(default=0) 
+    updated_datetime = models.DateTimeField(auto_now=True)
+    # delete_datetime = models.DateTimeField(null=True)
+    # is_delete = models.BooleanField(default=0)
+    # project_count=  models.IntegerField(default=0) 
     role=models.ForeignKey(role, on_delete=models.CASCADE) 
 
 
 class projects(models.Model):
     
-    pk = models.CompositePrimaryKey("group_id", "project_name")
-    project_name = models.CharField(max_length=255)
+    project_name = models.CharField(max_length=255, unique=True)
     project_status = models.CharField(max_length=30) # 枚举值tbd ["EMPTY","MODEL_RUNNING","MODEL","OUTPUT","SIMULATION_RUNNING""SIMULATION"]
     mcmc_current_task_id = models.CharField(max_length=100, null=True)
     simulation_current_task_id = models.CharField(max_length=100, null=True)
-    simulations_list=models.CharField(max_length=500, null=True) #tbd
+    # simulations_task_list=models.CharField(max_length=500, null=True) 
     created_datetime = models.DateTimeField(auto_now_add=True)
     updated_datetime = models.DateTimeField(auto_now=True)
-    delete_datetime = models.DateTimeField(null=True)
-    is_delete = models.BooleanField(default=0)
+    # delete_datetime = models.DateTimeField(null=True)
+    # is_delete = models.BooleanField(default=0)
     group = models.ForeignKey(group, on_delete=models.CASCADE)
     is_publish= models.BooleanField(default=0) 
     role=models.ForeignKey(role, on_delete=models.CASCADE)
@@ -842,18 +793,19 @@ class projects(models.Model):
 class rawdata(models.Model):
     
     df_rawdata = models.TextField()
-    df_data_ab_others== models.TextField()
+    df_data_ab_others= models.TextField(null=True) #formal：null=False
+    df_mccp= models.TextField(null=True)#formal：null=False
     brand_name= models.CharField()
     time_period_id= models.CharField()
     data_version_id= models.CharField()
-    ori_channel_list models.TextField()
+    ori_channel_list= models.TextField()
     ori_channel_prior= models.TextField()
     ori_segment= models.TextField()
     last = models.BooleanField(default=1)
-    projects = models.ForeignKey(projects, on_delete=models.CASCADE)
+    projects = models.OneToOneField(projects, on_delete=models.CASCADE)
 
 class mmm(models.Model):
-    
+
     agg_chnl_list= models.TextField()
     segmentation_type= models.TextField()
     parameters= models.TextField()
@@ -879,7 +831,7 @@ class mmm(models.Model):
 class simulation(models.Model):
 
     pk = models.CompositePrimaryKey("simulation_name", "projects_id")
-    simulation_name= models.CharField
+    simulation_name= models.CharField()
     optimization_type=models.TextField()
     parameters= models.TextField(null=True)
     optimization_output = models.TextField(null=True)
@@ -893,5 +845,69 @@ class simulation(models.Model):
     last = models.BooleanField(default=1)
     projects = models.ForeignKey(projects, on_delete=models.CASCADE)
     is_visible=models.BooleanField(default=1)
+    simulation_task_id = models.CharField(null=True)
+    simulation_task_status = models.CharField( null=True)
 
+class df_mccp(models.Model):
+        yyyymm       =models.IntegerField()
+        brand_en =models.CharField(max_length=500)
+        f2f    =models.FloatField()
+        ht     =models.FloatField()
+        iengage=models.FloatField()
+        ratio =models.FloatField()
+
+class df_input(models.Model):
+        data_version_id =models.IntegerField()
+        inst_code  =  models.CharField(max_length=500)
+        yyyymm  =models.IntegerField()
+        brand_en   =  models.CharField(max_length=500)
+        sum_sales_vol =models.FloatField()                       
+        sum_sales_val  =models.FloatField()
+        f2f_tp     =models.FloatField()
+        f2f_cost     =models.FloatField()
+        f2f_cost_direct      =models.FloatField()
+        ht_tp              =models.FloatField()
+        ht_cost            =models.FloatField()
+        ht_cost_direct       =models.FloatField()
+        standalone_offline_tp  =models.FloatField()
+        standalone_offline_cost  =models.FloatField()
+        standalone_offline_cost_direct  =models.FloatField()
+        standalone_online_tp   =models.FloatField()
+        standalone_online_cost      =models.FloatField()
+        standalone_online_cost_direct   =models.FloatField()
+        collaboration_offline_tp   =models.FloatField()
+        collaboration_offline_cost    =models.FloatField()
+        collaboration_offline_cost_direct  =models.FloatField()
+        collaboration_online_tp    =models.FloatField()
+        collaboration_online_cost    =models.FloatField()
+        collaboration_online_cost_direct  =models.FloatField()
+        sponsor_tp       =models.FloatField()
+        sponsor_cost    =models.FloatField()
+        sponsor_cost_direct     =models.FloatField()
+        iengage_tp        =models.FloatField()
+        iengage_cost                =models.FloatField()
+        iengage_cost_direct     =models.FloatField()
+        push_tp              =models.FloatField()
+        push_cost             =models.FloatField()
+        push_cost_direct        =models.FloatField()
+        pvuv_tp                =models.FloatField()
+        pvuv_cost             =models.FloatField()
+        pvuv_cost_direct =models.FloatField()
+        digital_third_tp =models.FloatField()
+        digital_third_cost =models.FloatField()
+        digital_third_cost_direct=models.FloatField()
+        segment_type_1  =models.IntegerField()
+        segment_type_2  =models.IntegerField()
+        segment_type_3  =models.IntegerField()
+        segment_type_4  =models.IntegerField()
+
+
+class df_abothers(models.Model):
+        data_version_id =models.IntegerField()
+        yyyymm          =models.IntegerField()
+        brand_en        =models.CharField(max_length=500)
+        f2f_total     =models.IntegerField()
+        f2f_ab        =models.IntegerField()
+        ht_total      =models.IntegerField()
+        ht_ab         =models.IntegerField()
 ```
