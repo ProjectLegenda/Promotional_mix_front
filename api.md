@@ -29,20 +29,21 @@
             "group_name": "Benlysta",
             "created_datetime": "2023-02-07T06:58:04.450Z",
             "project_count": 0,
-            "group_internal_privileges":["Create New Analysis","Upload"],
+            "group_internal_privileges":["Create New Analysis","Upload",'Rename'],
             "projects_list": []
         },
         {
             "group_name": "aaa",
             "created_datetime": "2023-02-07T09:23:00.338Z",
             "project_count": 1,
-            "group_internal_privileges":["Create New Analysis","Upload"],
+            "group_internal_privileges":["Create New Analysis","Upload",'Rename'],
             "projects_list": [
                 {
                     "project_name": "aaa_1",
                     "project_status": "MODELING",
                     "updated_datetime": "2023-02-07T09:23:00.386Z"
-                    "project_privileges:["Publish","Enter","Copy","Share","Delete"]
+                    "project_privileges:["Publish","Enter","Copy","Share",'Rename',"Delete"]
+                    "is_publish":True
                 }
             ]
 
@@ -170,16 +171,16 @@ tbd
     "projects_list": [
         {
             "project_name": "Benlysta",
-            "project_status": "MODEL", # 项目的状态有以下枚举值tbd ["EMPTY","MODEL_RUNNING","MODEL","OUTPUT","SIMULATION_RUNNING""SIMULATION"]
+            "project_status": "MODEL", # 项目的状态有以下枚举值tbd ["EMPTY","MODEL_RUNNING","MODEL","OUTPUT","SIMULATION_RUNNING","SIMULATION"]
             "updated_datetime": "2023-02-07T07:35:10.862Z",
-            "project_privileges:["Publish","Enter","Copy","Share","Delete"],
-            "simulations_list": {"simulation1":{"task_id": " ","is_visible":0,"task_status":" "},"simulation2":{"task_id":2222,"is_visible":1,"task_status":"SIMULATION_RUNNING"}}} 
+            "project_privileges:["Publish","Enter","Copy","Share","Rename","Delete"],
+            "simulations_list": {"simulation1":{"is_visible":0,"task_id": " ","task_status":" "},"simulation2":{"is_visible":1,"task_id":2222,"task_status":"SIMULATION_RUNNING"}}} 
         {
             "project_name": "Benlysta2",
             "project_status": "SIMULATION",
             "updated_datetime": "2023-01-09T00:00:00Z",
-            "project_privileges:["Enter","Copy"],
-            "simulations_list": {"simulation1":{"task_id": " ","is_visible":0,"task_status":" "},"simulation2":{"task_id":2222,"is_visible":1,"task_status":"SIMULATION_RUNNING"}}
+            "project_privileges:["Enter","Copy","Share"],
+            "simulations_list": {"simulation1":{"is_visible":0,"task_id": " ","task_status":" "},"simulation2":{"is_visible":1,"task_id":2222,"task_status":"SIMULATION_RUNNING"}}
         }
     ]
 }
@@ -721,19 +722,61 @@ TBD
 }
 ```
 ## simulation Visibility
-* POST ``/api/contents/${group_name}/${project_name}/simulation_visibility``
+* get ``/api/contents/${group_name}/${project_name}/simulation_visibility``
++ Request:(application/json)
++ Response:(application/json)
+```
+# 权限：Maintainer creator+Owner
+{
+    "simulation1":False,
+    "simulation2":True
+}
+``` 
+
+```
+{
+    "status":1, # other wise 0
+}
+```
+
+
+
+## simulation Visibility
+* POST ``/api/contents/${group_name}/${project_name}/${simulation_name}/...``
 + Request:(application/json)
 ```
 # 权限：Maintainer creator+Owner
 {
-    "simulation1":0,
-    "simulation2":1
+    "simulation1":False,
 }
 ``` 
 + Response:(application/json)
 ```
 {
     "status":1, # other wise 0
+}
+```
+## simulation Rename
+* POST /api/groups/${group_name}/rename
++ Request (application/json)
+```
+# 权限：Maintainer creator+ Owner 
+
+{
+   "group_name_new": str
+}
+```
++ Response:(application/json)
+```
+{
+    "status":int   # 1 success, 0 fail
+}
+```
++ Exception(application/json ? http status code)
+```
+{
+    'status': 0,
+    'message':'old group_name do not exist'
 }
 ```
 --------------------------------------
