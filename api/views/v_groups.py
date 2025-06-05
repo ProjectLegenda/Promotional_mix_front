@@ -10,9 +10,9 @@ from django.contrib.auth.decorators import login_required
 
 
 # privileges枚举值需要check，现在没有rename，UI界面上也没有
-@exceptionhandler
+# @exceptionhandler
 @login_required
-def get_groups(requet):
+def get_groups(request):
     current_user = request.user
     if current_user.is_authenticated: # same function with @login_required?
         r = current_user.role # due to One-to-One field
@@ -127,7 +127,7 @@ def get_groups(requet):
             return JsonResponse(result_response)
         
         
-@exceptionhandler
+# @exceptionhandler
 @login_required
 def group_add_or_delete(request,group_name):
     current_user = request.user
@@ -135,20 +135,22 @@ def group_add_or_delete(request,group_name):
         r = current_user.role # due to One-to-One field
         permission = r.role
         if request.method == "PUT":
-            return addgrp(request, group_name, permission)
+            return addgrp(request, group_name, permission, r)
         elif request.method == 'DELETE':
             return deletegrp(request, group_name, permission)
+    else:
+        return JsonResponse({"status": 0, "message": "Not authenticated."})
 
 
 # Add group: PUT 可以把参数放url里？还是在request.body里？不需要handle空group name？
 @transaction.atomic      
-def addgrp(request, group_name, permission):
+def addgrp(request, group_name, permission, user_role):
     # if request.method == "PUT":
     #     group_name = json.loads(request.body).get("group_name")
     #     # if not group_name:
     #     #     return JsonResponse({"status": 0, "message": "Group name is required."})
     if permission == 3 or permission == 2: # Owner or Maintainer can create new groups
-        new_group, created = group.objects.select_for_update().get_or_create(group_name=group_name)
+        new_group, created = group.objects.select_for_update().get_or_create(group_name=group_name, role=user_role)
         if created:
             return JsonResponse({"status": 1})
         else:
@@ -177,7 +179,7 @@ def deletegrp(request, group_name, permission):
     
 
 # different url with add/delete group
-@exceptionhandler
+# @exceptionhandler
 @transaction.atomic
 @login_required
 def renamegrp(request, group_name):
