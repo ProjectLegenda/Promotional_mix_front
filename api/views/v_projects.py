@@ -1,16 +1,16 @@
 import json
 # import pandas as pd
 import io
-from api.models import group, projects, rawdata
+from api.models import role, group, projects, rawdata, df_input
 from django.http import HttpResponse, JsonResponse
 from datetime import datetime
 from django.db import transaction
 from .exceptionhandler import exceptionhandler
-# from celery.result import AsyncResult
+from celery.result import AsyncResult
 from django.contrib.auth.decorators import login_required
 
 # Simulation: where to get task_id and task_status?
-@exceptionhandler
+# @exceptionhandler
 @login_required
 def get_projects(request, group_name):
     current_user = request.user
@@ -22,15 +22,6 @@ def get_projects(request, group_name):
             for p in projects_show:
                 simulations_show = simulation.objects.filter(projects__project_name=p.project_name)
                 result_simulation_list = list(simulations_show.values("simulation_name", "simulation_task_id", "is_visible", "simulation_task_status"))
-                # result_simulation_list = []
-                # for s in simulations_show:
-                #     s_result = {
-                #         "simulation_name": s.simulation_name,
-                #         "task_id": s.task_id,
-                #         "is_visible": s.is_visible,
-                #         "task_status": s.task_status
-                #     }
-                #     result_simulation_list.append(s_result)
                 p_result = {
                     "project_name": p.project_name,
                     "project_status": p.project_status,
@@ -51,15 +42,6 @@ def get_projects(request, group_name):
                 if p.role.auth_user == current_user: # 是当前用户创建的project: all simulations
                     simulations_show = simulation.objects.filter(projects__project_name=p.project_name)
                     result_simulation_list = list(simulations_show.values("simulation_name", "simulation_task_id", "is_visible", "simulation_task_status"))
-                    # result_simulation_list = []
-                    # for s in simulations_show:
-                    #     s_result = {
-                    #         "simulation_name": s.simulation_name,
-                    #         "task_id": s.task_id,
-                    #         "is_visible": s.is_visible,
-                    #         "task_status": s.task_status
-                    #     }
-                    #     result_simulation_list.append(s_result)
                     p_result = {
                         "project_name": p.project_name,
                         "project_status": p.project_status,
@@ -89,15 +71,6 @@ def get_projects(request, group_name):
             for p in projects_show:
                 simulations_show = simulation.objects.filter(projects__project_name=p.project_name, is_visible=True)
                 result_simulation_list = list(simulations_show.values("simulation_name", "simulation_task_id", "is_visible", "simulation_task_status"))
-                # result_simulation_list = []
-                # for s in simulations_show:
-                #     s_result = {
-                #         "simulation_name": s.simulation_name,
-                #         "task_id": s.task_id,
-                #         # "is_visible": s.is_visible, # must be visible
-                #         "task_status": s.task_status
-                #     }
-                #     result_simulation_list.append(s_result)
                 p_result = {
                     "project_name": p.project_name,
                     "project_status": p.project_status,
@@ -113,7 +86,7 @@ def get_projects(request, group_name):
             return JsonResponse(result_response)
         
 
-@exceptionhandler
+# @exceptionhandler
 @login_required
 def project_add_or_delete(request, group_name, project_name):
     current_user = request.user
@@ -124,6 +97,11 @@ def project_add_or_delete(request, group_name, project_name):
             return addproj(request, group_name, project_name, permission)
         elif request.method == 'DELETE':
             return deleteproj(request, group_name, project_name, permission)
+        # elif request.method == 'POST':
+        #     return importproj(request, group_name, project_name)
+        # elif request.method == 'GET':
+        #     return exportproj(request, group_name, project_name)
+        
         
 
 @transaction.atomic
@@ -144,15 +122,18 @@ def addproj(request, group_name, project_name, permission):
             
         target_role = role.objects.get(auth_user=request.user)
         
-        if projects.object.filter(project_name=project_name).exists():
+        if projects.objects.filter(project_name=project_name).exists():
             return JsonResponse({"status": 0, "message": "Project name has been used. Please rename."})
         
         new_project = projects.objects.select_for_update().create(
             project_name=project_name, 
             project_status="EMPTY",
             group=target_group,
-            role=target_user)
+            role=target_role)
+        new_df_input = list(df_input.objects.all().values())
+        new_df_input_json = json.dumps(new_df_input)
         new_rawdata = rawdata.objects.select_for_update().create(
+            df_rawdata=new_df_input_json,
             brand_name=brand_name,
             time_period_id=time_period_id,
             data_version_id=data_version_id,
@@ -166,93 +147,152 @@ def addproj(request, group_name, project_name, permission):
     
     
 
-# @transaction.atomic
-# def deleteproj(request, group_name, project_name, permission):
-#     if permission == 3: # Owner can delete any group
-#         pass
-#     elif permisison == 2: # Maintainer can only delete groups created by him/her
-#         if g.role.auth_user != request.user: # 不是当前用户创建的group
-#             return JsonResponse({"status": 0, "message": "No permission."}) # msg TBD
-#     else: # Guest
-#         return JsonResponse({"status": 0, "message": "No permission."}) # msg TBD
+@transaction.atomic
+def deleteproj(request, group_name, project_name, permission):
+    try:
+        g = group.objects.get(group_name=group_name)
+    except group.DoesNotExist:
+            return JsonResponse({"status": 0, "message": "Group not found."}) # msg TBD
     
-#     try:
-#         p = projects.
+    try:
+        p = projects.objects.select_for_update().get(project_name=project_name, group__group_name=group_name)
+        if permission == 3: # Owner can delete any project
+            pass
+        elif permisison == 2: # Maintainer can only delete projects created by him/her
+            if p.role.auth_user != request.user: # 不是当前用户创建的project
+                return JsonResponse({"status": 0, "message": "No permission."}) # msg TBD
+        else: # Guest
+            return JsonResponse({"status": 0, "message": "No permission."}) # msg TBD
+        
+        ########################################### subject to change
+        if p.project_status == "MODELING":
+            AsyncResult(p.mcmc_current_task_id).revoke(terminate=True)
+        if p.project_status == "SIMULATING":
+            AsyncResult(p.simulation_current_task_id).revoke(terminate=True)
+        ########################################### subject to change
+        
+        p.delete() # all project related records should also be deleted: rawdata, mmm, simulation
+        return JsonResponse({'status': 1})
     
-    
-# def deleteproj(request,group_name,project_name):
-#     with transaction.atomic():
-#         try:
-#             pj_delete = projs.objects.select_for_update().get(project_name=project_name, group__group_name=group_name)
-#             if pj_delete.project_status == "BAYES_MCMC_RUNNING":
-#                 AsyncResult(pj_delete.mcmc_current_task_id).revoke(terminate=True)
-#             pj_delete.delete()
-#             return JsonResponse({'status': 1})
-#         except projs.DoesNotExist:
-#             return JsonResponse({'status': 0})
+    except projects.DoesNotExist:
+        return JsonResponse({'status': 0, "message": "Project not found."}) # msg TBD
     
 
-# # 真delete
-# @transaction.atomic
-# def deletegrp(request, group_name, permission):
-#     if permission == 3: # Owner can delete any group
-#         pass
-#     elif permisison == 2: # Maintainer can only delete groups created by him/her
-#         if g.role.auth_user != request.user: # 不是当前用户创建的group
-#             return JsonResponse({"status": 0, "message": "No permission."}) # msg TBD
-#     else: # Guest
-#         return JsonResponse({"status": 0, "message": "No permission."}) # msg TBD
-    
-#     try:
-#         g = group.objects.select_for_update().get(group_name=group_name)
-#         g.delete() # will delete all projects in the group due to on_delete=models.CASCADE
-#         return JsonResponse({'status': 1})
-#     except group.DoesNotExist:
-#         return JsonResponse({'status': 0, "message": "Group not found."}) # msg TBD
-             
+
+# different url with add/delete project
+# @exceptionhandler
+@transaction.atomic
+@login_required
+def renameproj(request, group_name, project_name):
+    current_user = request.user
+    if current_user.is_authenticated: # same function with @login_required?
+        r = current_user.role # due to One-to-One field
+        permission = r.role
+        
+        try:
+            g = group.objects.get(group_name=group_name)
+        except group.DoesNotExist:
+            return JsonResponse({"status": 0, "message": "Group not found."}) # msg TBD
+        
+        try:
+            p = projects.objects.select_for_update().get(project_name=project_name, group__group_name=group_name)
+            if permission == 3: # Owner can rename any project
+                pass
+            elif permisison == 2: # Maintainer can only rename projects created by him/her
+                if p.role.auth_user != current_user: # 不是当前用户创建的project
+                    return JsonResponse({"status": 0, "message": "No permission."}) # msg TBD
+            else: # Guest
+                return JsonResponse({"status": 0, "message": "No permission."}) # msg TBD
             
+            data = json.loads(request.body)
+            project_name_new = data.get("project_name_new") # param name to be confirmed
+            if not project_name_new:
+                return JsonResponse({'status': 0, "message": "Missing new project name."}) # msg TBD
+            if projects.objects.filter(project_name=project_name_new, group__group_name=group_name).exists():
+                return JsonResponse({'status': 0, "message": "New project name already exists."}) # msg TBD
 
+            # rename
+            p.project_name = project_name_new
+            p.save() # auto_now only works when calling Model.save()
+            return JsonResponse({'status': 1})
+        
+        except projects.DoesNotExist:
+            return JsonResponse({'status': 0, "message": "Original project not found."}) # msg TBD
+        
 
 # @exceptionhandler
-# def renameproj(request, group_name,project_name):
-#     with transaction.atomic():
-#         params = json.loads(request.body)
-#         proj_nm_new = params['project_name_new']
+@transaction.atomic
+@login_required
+def publishproj(request, group_name, project_name):
+    current_user = request.user
+    if current_user.is_authenticated: # same function with @login_required?
+        r = current_user.role # due to One-to-One field
+        permission = r.role
+        
+        try:
+            g = group.objects.get(group_name=group_name)
+        except group.DoesNotExist:
+            return JsonResponse({"status": 0, "message": "Group not found."}) # msg TBD
+        
+        try:
+            p = projects.objects.select_for_update().get(project_name=project_name, group__group_name=group_name)
+            if permission == 3: # Owner can publish any project
+                pass
+            elif permisison == 2: # Maintainer can only publish projects created by him/her
+                if p.role.auth_user != current_user: # 不是当前用户创建的project
+                    return JsonResponse({"status": 0, "message": "No permission."}) # msg TBD
+            else: # Guest
+                return JsonResponse({"status": 0, "message": "No permission."}) # msg TBD
+            
+            # publish
+            p.is_publish = True
+            p.save()
+            return JsonResponse({'status': 1})
+        
+        except projects.DoesNotExist:
+            return JsonResponse({'status': 0, "message": "Original project not found."}) # msg TBD
+            
+        
+# @exceptionhandler
+@transaction.atomic
+@login_required
+def cancelpublishproj(request, group_name, project_name):
+    current_user = request.user
+    if current_user.is_authenticated: # same function with @login_required?
+        r = current_user.role # due to One-to-One field
+        permission = r.role
+        
+        try:
+            g = group.objects.get(group_name=group_name)
+        except group.DoesNotExist:
+            return JsonResponse({"status": 0, "message": "Group not found."}) # msg TBD
+        
+        try:
+            p = projects.objects.select_for_update().get(project_name=project_name, group__group_name=group_name)
+            if permission == 3: # Owner can cancel publish any project
+                pass
+            elif permisison == 2: # Maintainer can only cancel publish projects created by him/her
+                if p.role.auth_user != current_user: # 不是当前用户创建的project
+                    return JsonResponse({"status": 0, "message": "No permission."}) # msg TBD
+            else: # Guest
+                return JsonResponse({"status": 0, "message": "No permission."}) # msg TBD
+            
+            # publish
+            p.is_publish = False
+            p.save()
+            return JsonResponse({'status': 1})
+        
+        except projects.DoesNotExist:
+            return JsonResponse({'status': 0, "message": "Original project not found."}) # msg TBD       
 
-#         try:
-#             group.objects.select_for_update().get(group_name=group_name)
-#         except group.DoesNotExist:
-#             return JsonResponse({'status': 0,'message':'group_name is not correct'})
-#         try:
-#             proj_rename = projs.objects.select_for_update().get(project_name=project_name)
-#         except group.DoesNotExist:
-#             return JsonResponse({'status': 0,'message':'old project_name is not correct'})
-#         proj_rename.project_name = proj_nm_new
-#         proj_rename.save()
-#         return JsonResponse({'status': 1})
-# # @exceptionhandler
-# def v_projects(request,group_name,project_name):
-#     if request.method == "GET":
-#        return exportproj(request, group_name,project_name)
-#     if request.method == "PUT":
-#         return addproj(request,group_name,project_name)
-#     elif request.method == "DELETE":
-#         return deleteproj(request,group_name,project_name)
-#     elif request.method == "POST":
-#         return importproj(request,group_name,project_name)
+    
 
-
-
-# def deleteproj(request,group_name,project_name):
-#     with transaction.atomic():
-#         try:
-#             pj_delete = projs.objects.select_for_update().get(project_name=project_name, group__group_name=group_name)
-#             if pj_delete.project_status == "BAYES_MCMC_RUNNING":
-#                 AsyncResult(pj_delete.mcmc_current_task_id).revoke(terminate=True)
-#             pj_delete.delete()
-#             return JsonResponse({'status': 1})
-#         except projs.DoesNotExist:
-#             return JsonResponse({'status': 0})
+        
+             
+        
+    
+           
+             
 
 # def exportproj(request, group_name,project_name):
 #     with transaction.atomic():
