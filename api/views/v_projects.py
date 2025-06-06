@@ -1,5 +1,5 @@
 import json
-# import pandas as pd
+import pandas as pd
 import io
 from api.models import role, group, projects, rawdata, df_input
 from django.http import HttpResponse, JsonResponse
@@ -8,6 +8,7 @@ from django.db import transaction
 from .exceptionhandler import exceptionhandler
 from celery.result import AsyncResult
 from django.contrib.auth.decorators import login_required
+from lightweightmmm.platform_testing.code_mmm.preprocess_rawdata import etl_data_date_qc
 
 # Simulation: where to get task_id and task_status?
 # @exceptionhandler
@@ -125,15 +126,29 @@ def addproj(request, group_name, project_name, permission):
         if projects.objects.filter(project_name=project_name).exists():
             return JsonResponse({"status": 0, "message": "Project name has been used. Please rename."})
         
+        # read in rawdata from df_input
+        new_df_input = pd.DataFrame(list(df_input.objects.all().values())) # read into a pandas df
+        new_df_input = new_df_input.drop(columns="id")
+        
+        ################################################## Code from Yinan
+        settings = {"data_version_id": data_version_id,
+                    "brand_selected": brand_name,
+                    "yyyymm_end": time_period_id}
+
+        # check whether the brand data have 24 months data and fiter data by data_version_id & brand_selected & yyyymm_end&
+        rawdata_filter = etl_data_date_qc(rawdata=new_df_input, settings=settings) # original 11 channels
+        ################################################## Code from Yinan
+        
+        # convert rawdata_filter df to json
+        rawdata_filter_json = rawdata_filter.to_json(orient='records')
+        
         new_project = projects.objects.select_for_update().create(
             project_name=project_name, 
             project_status="EMPTY",
             group=target_group,
             role=target_role)
-        new_df_input = list(df_input.objects.all().values())
-        new_df_input_json = json.dumps(new_df_input)
         new_rawdata = rawdata.objects.select_for_update().create(
-            df_rawdata=new_df_input_json,
+            df_rawdata=rawdata_filter_json,
             brand_name=brand_name,
             time_period_id=time_period_id,
             data_version_id=data_version_id,
