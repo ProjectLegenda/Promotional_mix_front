@@ -162,16 +162,16 @@ def addgrp(request, group_name, permission, user_role):
 # 真delete
 @transaction.atomic
 def deletegrp(request, group_name, permission):
-    if permission == 3: # Owner can delete any group
-        pass
-    elif permisison == 2: # Maintainer can only delete groups created by him/her
-        if g.role.auth_user != request.user: # 不是当前用户创建的group
-            return JsonResponse({"status": 0, "message": "No permission."}) # msg TBD
-    else: # Guest
-        return JsonResponse({"status": 0, "message": "No permission."}) # msg TBD
-    
     try:
         g = group.objects.select_for_update().get(group_name=group_name)
+        if permission == 3: # Owner can delete any group
+            pass
+        elif permisison == 2: # Maintainer can only delete groups created by him/her
+            if g.role.auth_user != request.user: # 不是当前用户创建的group
+                return JsonResponse({"status": 0, "message": "No permission."}) # msg TBD
+        else: # Guest
+            return JsonResponse({"status": 0, "message": "No permission."}) # msg TBD
+    
         g.delete() # will delete all projects in the group due to on_delete=models.CASCADE
         return JsonResponse({'status': 1})
     except group.DoesNotExist:
@@ -188,27 +188,28 @@ def renamegrp(request, group_name):
         r = current_user.role # due to One-to-One field
         permission = r.role
         
-        if permission == 3: # Owner can rename any group
-            pass
-        elif permisison == 2: # Maintainer can only rename groups created by him/her
-            if g.role.auth_user != current_user: # 不是当前用户创建的group
-                return JsonResponse({"status": 0, "message": "No permission."}) # msg TBD
-        else: # Guest
-            return JsonResponse({"status": 0, "message": "No permission."}) # msg TBD
-        
-        data = json.loads(request.body)
-        group_name_new = data.get("group_name_new") # param name to be confirmed
-        if not group_name_new:
-            return JsonResponse({'status': 0, "message": "Missing new group name."}) # msg TBD
-        if group.objects.filter(group_name=group_name_new).exists():
-            return JsonResponse({'status': 0, "message": "New group name already exists."}) # msg TBD
-        
         try:
             g = group.objects.select_for_update().get(group_name = group_name)
+            if permission == 3: # Owner can rename any group
+                pass
+            elif permisison == 2: # Maintainer can only rename groups created by him/her
+                if g.role.auth_user != current_user: # 不是当前用户创建的group
+                    return JsonResponse({"status": 0, "message": "No permission."}) # msg TBD
+            else: # Guest
+                return JsonResponse({"status": 0, "message": "No permission."}) # msg TBD
+            
+            data = json.loads(request.body)
+            group_name_new = data.get("group_name_new") # param name to be confirmed
+            if not group_name_new:
+                return JsonResponse({'status': 0, "message": "Missing new group name."}) # msg TBD
+            if group.objects.filter(group_name=group_name_new).exists():
+                return JsonResponse({'status': 0, "message": "New group name already exists."}) # msg TBD
+
             # rename
             g.group_name = group_name_new
             g.save() # auto_now only works when calling Model.save()
             return JsonResponse({'status': 1})
+        
         except group.DoesNotExist:
             return JsonResponse({'status': 0, "message": "Original group not found."}) # msg TBD
         
