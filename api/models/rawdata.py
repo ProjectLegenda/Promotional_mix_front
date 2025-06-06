@@ -7,8 +7,8 @@ class rawdata(models.Model):
     df_data_ab_others= models.TextField(null=True) #formal change：null=False
     df_mccp= models.TextField(null=True)#formal change：null=False
     brand_name= models.CharField()
-    time_period_id= models.CharField()
-    data_version_id= models.CharField()
+    yyyymm_end= models.IntegerField()
+    data_version_id= models.IntegerField()
     ori_channel_list= models.TextField(default={
     "f2f": 0,
     "ht": 1,
@@ -21,30 +21,7 @@ class rawdata(models.Model):
     "sponsor": 8
     }
 )
-    ori_channel_prior= models.TextField(default={
-    "channel_name": [
-        "f2f",
-        "ht",
-        "digital_gsk",
-        "digital_third",
-        "standalone_online",
-        "collaboration_online",
-        "standalone_offline",
-        "collaboration_offline",
-        "sponsor"
-    ],
-    "channel_prior": [
-        0.56,
-        0.76,
-        0.53,
-        0.52,
-        0.68,
-        0.68,
-        0.71,
-        0.71,
-        0.75
-    ]
-}                                        )
+    ori_channel_prior= models.TextField()
     ori_segment= models.TextField(default={
     "segment_type_1": {
         "Total_market": 0,

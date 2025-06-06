@@ -432,14 +432,34 @@ TBD
         "channel_name":str, 
         "channel_prior":int  
     ], # for each project, there is a default_channel_list needed to be rendered for modeling pages
-    "default_segmentation_type_list": ["Type:Core,Engine,Others","Type:Lupus_Center,Others"......], # as above
+    "default_segmentation_type_list": {
+    "segment_type_1": {
+        "Total_market": 0,
+        "Core": 1,
+        "Engine": 2,
+        "Others": 3
+        },
+    "segment_type_2": {
+        "Total_market": 0,
+        "Central": 1,
+        "Regional": 2,
+        "Others": 3
+        },
+    "segment_type_3": {
+        "Total_market": 0,
+        "Lupus_Center": 1,
+        "Others": 2
+        },
+    "segment_type_4": {
+        "Total_market": 0,
+        "Lupus_Certification_Center": 1,
+        "Lupus_Demonstration_Center": 2,
+        "Others": 3
+        },
+},
     "brand_name":"Benlysta",
     "time_period_id": int # only month_id
     "data_version_id":int # date like 20250501
-    "AB_proportion_list":[
-        "AB_proportion_option":str, 
-        "AB_proportion":float  
-    ], # for each project, there is a AB_proportion_list needed to be rendered for simulation pages
 }
 
 ```
